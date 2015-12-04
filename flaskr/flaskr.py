@@ -65,11 +65,19 @@ def main():
 
     if request.method == 'POST':
         print request.form
-        isbn=request.form['isbn']
-        return render_template('main.html',isbn=isbn)
+        orders=[] # PT - list of isbn of book cutomers want to order
+        for k in request.form:
+            if 'isbn' in k:
+                isbn=request.form[k]
+                g.db.execute('insert into entries (title, text) values (?, ?)',
+                     [request.form['title'], request.form['text']])
+                g.db.commit()
+
+        return redirect(url_for('order_complete/%s/%s' % date,username ))
     elif request.method == 'GET':
         error = None
         book_list = query_db('select * from Books')
+        print book_list
         return render_template('main.html',book_list=book_list)
 
 @app.route('/order', methods=['GET','POST'])
@@ -82,6 +90,10 @@ def order():
         return redirect(url_for('order'))
     elif request.method == 'GET':
         return render_template('order_complete.html')
+
+@app.route('/order_complete/<date>/<username>', methods=['GET','POST'])
+def order_complete():
+    return render_template('order_complete.html')
 
 @app.route('/book/<isbn>', methods=['GET'])
 def book(isbn):

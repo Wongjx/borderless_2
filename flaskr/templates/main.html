@@ -103,9 +103,6 @@
         </div>
         <!-- /.row -->
         <div class="row" align="center">
-            {% if isbn %}
-            {{isbn}}
-            {%endif%}
             <form method="POST" id="order_multiple">
             <table id="myTable" class="display" width="100%"></table>
             <button class="btn btn-primary">ORDER NOW!</button>
@@ -125,19 +122,20 @@ $('#advance_search').click(function(){
 });
     
 var dataSet=[]
-
+var number=0
 {% for book in book_list %}
 var each_data=[]
 
 each_data.push("<a href='"+"/book/"+"{{book.isbn}}"+"''>{{book.title}}</a>")
-each_data.push("{{book.author}}")
+each_data.push("{{book.authors}}")
 each_data.push("{{book.publisher}}")
 each_data.push("{{book.year_of_publication}}")
 each_data.push("{{book.quantity_left}}")
 each_data.push("{{book.price}}")
 each_data.push("{{book.format}}")
-each_data.push("<input type='checkbox' name='isbn' value='"+"{{book.isbn}}'>")
-
+each_data.push("{{book.subject}}")
+each_data.push("<input type='checkbox' name='isbn_"+number.toString()+"' value='"+"{{book.isbn}}'>")
+number+=1
 dataSet.push(each_data)
 {% endfor %}
 console.log(dataSet)
@@ -151,7 +149,8 @@ $('#myTable').DataTable({
             { title: "Year of Publication" },
             { title: "Quantity" },
             { title: "Price" },
-            { title: "format" },
+            { title: "Format" },
+            { title: "Genre"},
             { title: "Order Now!"}
         ]
     });
