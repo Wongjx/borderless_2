@@ -60,8 +60,8 @@ def close_connection(exception):
 
 
 ## ROUTES
-@app.route('/main', methods=['GET','POST'])
-def main():
+@app.route('/main/<login_name>', methods=['GET','POST'])
+def main(login_name):
 
     if request.method == 'POST':
         print request.form
@@ -69,16 +69,18 @@ def main():
         for k in request.form:
             if 'isbn' in k:
                 isbn=request.form[k]
-                g.db.execute('insert into entries (title, text) values (?, ?)',
-                     [request.form['title'], request.form['text']])
-                g.db.commit()
 
         return redirect(url_for('order_complete/%s/%s' % date,username ))
     elif request.method == 'GET':
-        error = None
-        book_list = query_db('select * from Books')
-        print book_list
-        return render_template('main.html',book_list=book_list)
+        # login_name=request.args['login_name']
+        print login_name
+        if not login_name:
+            return redirect(url_for('login'))
+        else:
+            error = None
+            book_list = query_db('select * from Books')
+            print book_list
+            return render_template('main.html',book_list=book_list, login_name=login_name)
 
 @app.route('/order', methods=['GET','POST'])
 def order():
@@ -95,9 +97,10 @@ def order():
 def order_complete():
     return render_template('order_complete.html')
 
-@app.route('/book/<isbn>', methods=['GET'])
-def book(isbn):
+@app.route('/book/<login_name>/<isbn>', methods=['GET'])
+def book(login_name,isbn):
     book = query_db('Select * from Books where isbn = ?', [isbn], one=True)
+    rate=query_db('Select * from Rate_book where isbn = ? and login_name = ?', [isbn,login_name], one=True)
     if book is None:
         error = 'Invalid ISBN'
         return redirect(url_for('main'))
@@ -147,7 +150,7 @@ def login():
                 session['logged_in'] = True
                 session ['user'] = user
                 flash('You were logged in')
-                return redirect(url_for('main'))
+                return redirect(url_for('main', login_name=the_username))
             else:
                 error = 'Invalid password'
     return render_template('login.html', error=error)
