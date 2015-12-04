@@ -1,18 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-		<meta charset="utf-8">
-		<title>Borderless</title>
-		<meta name="generator" content="Bootply" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-		<link href="css/bootstrap.min.css" rel="stylesheet">
-		<!--[if lt IE 9]>
-			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
-		<![endif]-->
-		<link href="css/styles.css" rel="stylesheet">
-	</head>
-	<body>
+{% extends "base.html" %}
+
+{%block content%}
 
 <div class="container" style="text-align:center">
 
@@ -22,6 +10,7 @@
 <div class="container" style="text-align:center">
 <div class="row">
   <div class="col-lg-6 col-md-offset-3" >
+		{% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
     <form method="post">
     <fieldset>
       <legend>Log In</legend>
@@ -33,7 +22,7 @@
       </div>
       <div class="form-group">
         <label class="col-lg-4 control-label left-align">Username</label>
-        
+
           <input type="text" class="form-control" name="username" id="username" placeholder="Username">
 
       </div>
@@ -60,7 +49,7 @@
           <input type="text" class="form-control" name="name" id="credit_card_no" placeholder="Credit Card Number">
 
       </div>
-      
+
       <div class="form-group">
           <button type="submit" class="btn btn-primary">Sign Up</button>
       </div>
@@ -68,9 +57,5 @@
     </form>
 </div></div>
 
-	<!-- script references -->
-		<script scr="js/jquery.js"></script>
-		<script src="js/bootstrap.min.js"></script>
-		<script src="js/scripts.js"></script>
-	</body>
-</html>
+<!-- script references -->
+{%endblock%}
