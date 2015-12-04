@@ -1,0 +1,163 @@
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+      <meta charset="utf-8">
+      <title>My-BookStore</title>
+      <meta name="generator" content="Bootply" />
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+      <link href="css/bootstrap.min.css" rel="stylesheet">    
+      <link href="css/datatable.css" rel="stylesheet">    
+
+  <input class="pull-right"/>
+      <!--[if lt IE 9]>
+        <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+         
+      <link href="css/styles.css" rel="stylesheet">
+      
+    </head>
+    <body>
+  <nav class="navbar navbar-static">
+      <div class="container">
+        <a class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="glyphicon glyphicon-chevron-down"></span>
+        </a>
+        <div cljquss="nav-collapse collase">
+  <!--         <ul class="nav navbar-nav">  
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Link</a></li>
+            <li><a href="#">Link</a></li>
+          </ul> -->
+          <ul class="nav navbar-right navbar-nav">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-search"></i></a>
+              <ul class="dropdown-menu" style="padding:12px;">
+                  <form class="form-inline">
+                     <div class="input-group">
+                       <input type="text" class="form-control" placeholder="Search">
+                       <div class="input-group-btn">
+                   <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i></button>
+                       </div>
+                    </div>
+                  </form>
+                </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i> <i class="glyphicon glyphicon-chevron-down"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Profile</a></li>
+                <li class="divider"></li>
+                <li><a href="#">Sign out</a></li>
+  <!--               <li class="divider"></li>
+                <li><a href="#">About</a></li> -->
+               </ul>
+            </li>  
+          </ul>
+        </div>    
+      </div>
+  </nav><!-- /.navbar -->
+
+  <header class="masthead">
+    <div class="container">
+      <div class="row">
+        <div class="col col-sm-6">
+          <h1 ><a href="#" title="Inventory page for admin">Inventory</a>
+          </div>
+        
+      </div>
+    </div> 
+  </header>
+  <div class="container">
+          <button style="float:right;" type="submit" id="add_stock">Submit</button> 
+
+  </div>
+
+
+  <div class="container">
+    <div class="row-fluid">
+  <table id="example" class="display" cellspacing="0">
+          <thead>
+              <tr>
+                  <th>ISBN</th>
+      <th>Title</th>   
+      <th>Publisher</th>
+      <th>Quantity</th>   
+      <th>Price</th>
+      <th>Year Published</th>
+      <th>Format</th>
+      <th>Tags</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr>
+                <form method="post" id="form_add_stock">
+          <td><input id="row-1-ISBN" name="row-1-age" value="ISBN" type="text"></td>
+          <td><input id="row-1-Title" name="row-1-age" value="Title" type="text"></td>
+          <td><input id="row-1-Publisher" name="row-1-position" value="Publisher" type="text"></td>
+          <td><input id="row-1-Quantity" name="row-1-position" value="Quantity" type="text"></td>
+          <td><input id="row-1-Price" name="row-1-position" value="Price" type="text"></td>
+          <td><input id="row-1-Year Published" name="row-1-position" value="Year Published" type="text"></td>
+          <td><input id="row-1-Format" name="row-1-position" value="Format" type="text"></td>
+          <td><input id="row-1-Tags" name="row-1-position" value="Tags" type="text"></td>
+
+        </form>
+        </tr>
+          </tbody>
+      </table>
+    </div>
+  </div>
+
+   <hr>
+
+          <!-- Pagination -->
+          <div class="row text-center">
+              <div class="col-lg-12">
+                  <ul class="pagination">
+                      <li>
+                          <a href="#">«</a>
+                      </li>
+                      <li class="active">
+                          <a href="#">1</a>
+                      </li>
+                      <li>
+                          <a href="#">2</a>
+                      </li>
+                      <li>
+                          <a href="#">3</a>
+                      </li>
+                      <li>
+                          <a href="#">4</a>
+                      </li>
+                      <li>
+                          <a href="#">5</a>
+                      </li>
+                      <li>
+                          <a href="#">»</a>
+                      </li>
+                  </ul>
+              </div>
+          </div>
+          <!-- /.row -->
+
+          <hr>
+
+    <!-- script references -->
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-2.1.4.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/scripts.js"></script>
+    <script src="js/datatable.js"></script>
+    <script>
+$('#example').dataTable( {
+  "columnDefs": [
+    { "width": "20%", "targets": 0 }
+  ]
+} );
+
+$("add_stock").click(function(){
+  $("form_add_stock").submit();
+});
+    </script>
+    </body>
+  </html>
