@@ -6,7 +6,8 @@ from flask import Flask,request,session,g,redirect,url_for, abort, render_templa
 
 #configuration
 # DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless//flaskr//tmp//flaskr.db'
-DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
+# DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
+DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
 DEBUG = True
 SECRET_KEY = 'development key'
 USERNAME = 'admin'
@@ -59,10 +60,17 @@ def close_connection(exception):
 
 
 ## ROUTES
-@app.route('/main', methods=['GET'])
+@app.route('/main', methods=['GET','POST'])
 def main():
-    error = None
-    return render_template('main.html')
+
+    if request.method == 'POST':
+        print request.form
+        isbn=request.form['isbn']
+        return render_template('main.html',isbn=isbn)
+    elif request.method == 'GET':
+        error = None
+        book_list = query_db('select * from Books')
+        return render_template('main.html',book_list=book_list)
 
 @app.route('/order', methods=['GET','POST'])
 def order():
