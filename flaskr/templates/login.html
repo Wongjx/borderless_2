@@ -26,12 +26,14 @@
 <div class="container" style="text-align:center">
 <div class="row">
   <div class="col-lg-6 col-md-offset-3" >
+    {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
+    <div class=flash>{{ message }}</div>
     <form method="post">
     <fieldset>
       <legend>Log In</legend>
       <div class="form-group">
         <label for="username" class="col-lg-2 control-label">Username</label>
-        
+
           <input type="text" class="form-control" name="username" id="username" placeholder="Username">
 
       </div>
@@ -41,16 +43,17 @@
           <input type="password" class="form-control" name="password" id="password" placeholder="Password">
 
       </div>
-      
+
       <div class="form-group">
           <button type="submit" class="btn btn-primary">Log In</button>
       </div>
     </fieldset>
     </form>
     <legend>Not a customer?</legend>
-    <button type="submit" class="btn btn-primary">Sign Up</button>
+    <a href="{{url_for('signup')}}" class="btn btn-primary">Sign Up</a>
 </div></div>
 
 	<!-- script references -->
 </body>
 </html>
+

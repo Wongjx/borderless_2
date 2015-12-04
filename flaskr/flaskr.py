@@ -83,6 +83,43 @@ def order():
     elif request.method == 'GET':
         return render_template('order_complete.html')
 
+@app.route('/book/<isbn>', methods=['GET'])
+def book(isbn):
+    book = query_db('Select * from Books where isbn = ?', [isbn], one=True)
+    if book is None:
+        error = 'Invalid ISBN'
+        return redirect(url_for('main'))
+    return render_template('individual_book.html',book=book)
+
+@app.route('/search', methods=['GET','POST'])
+def search():
+    error = None
+    if request.method == 'POST':
+        book_name = request.form['book_name']
+        book = query_db('Select * from Books where title like ?', ['%'+book_name+'%'], one=True)
+        if book is None:
+            error = 'Invalid ISBN'
+            return render_template('search_result.html',error=error)
+    return render_template('search_result.html',search=book)
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    error = None
+    if request.method == 'POST':
+        #Username not correct
+        the_username = request.form['username']
+        user = query_db('select * from Customers where login_name = ?', [the_username], one=True)
+        if user is None:
+            ## New user sign up
+            # status =  insert_db ('insert into Customers values ('?,')')
+            flash('Sign up successful!')
+            return redirect(url_for('login'))
+        else:
+            ## Existing account with same login name
+            error = 'Username already in use'
+    ## 'GET' route
+    return render_template('signup.html', error=error)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
@@ -102,22 +139,6 @@ def login():
             else:
                 error = 'Invalid password'
     return render_template('login.html', error=error)
-
-@app.route('/book/<isbn>', methods=['GET'])
-def book(isbn):
-    book = query_db('Select * from Books where isbn = ?', [isbn], one=True)
-    if book is None:
-        error = 'Invalid ISBN'
-        return redirect(url_for('main'))
-    return render_template('individual_book.html',book=book)
-
-@app.route('/search', methods=['GET'])
-def search():
-    # book = query_db('Select * from Books where isbn = ?', [isbn], one=True)
-    # if book is None:
-    #     error = 'Invalid ISBN'
-    #     return redirect(url_for('main'))
-    return render_template('search_results.html',entries=entries)
 
 
 @app.route('/logout')
