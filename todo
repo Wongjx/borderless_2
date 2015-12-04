@@ -2,8 +2,35 @@ Search:
 - Template broken 
 - Needs to show parameter error after searching (?)
 - Make search work for multiple search results
-- Advanced search
+- Advanced search => authors, and/or publisher, and/or title, and/or subject
+				  =>  sorted a) by year, or b) by the average score of the feedbacks
 
 Register:
 - Insert new customer into Db table
 
+Profile page:
+• his/her account information
+• his/her full history of orders (book name, number of copies, date etc.)
+• his/her full history of feedbacks
+• the list of all the feedbacks he/she ranked with respect to usefulness
+
+Admin page:
+- New book
+- Change number of copies of book available
+- Stats:
+• the list of the m most popular books (in terms of copies sold in this month)
+• the list of m most popular authors
+• the list of m most popular publishers
+
+Individual Book:
+- Feedback Record => 1-10 scoring and comment
+- Rating on feedbacks
+- user can only make 1 comment on a book
+- user cannot rate their own feedback
+- user could ask for the top n most ‘useful’ feedbacks
+- Book recommendation
+
+REPORT!!!:
+- Part 1 ER diagram for the application and the relational schema
+- Part 2 sample and representative SQL code of the functions it helps to implement; 2 or 3
+representative screen dumps of the Web/mobile app interface.
