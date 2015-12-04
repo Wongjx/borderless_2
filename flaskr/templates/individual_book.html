@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{%block content%}
+
+<header class="masthead">
+  <div class="container">
+    <h1>{{Individual}}</h1>
+    <br>
+    <div class="row">
+
+      <div class="col col-sm-9">
+      <div class="row">
+      <div class="col-md-4">
+        <br>
+        <img class="img-responsive" src="http://placehold.it/750x450" alt="">
+      </div>
+      <div class="col-md-8">
+      <div class="row">
+      <h1>Title: {{book.title}}</h1>
+      <h3>Author: {{book.author}}</h3>3>
+      <h3>Publisher: {{book.publisher}}</h3>>
+      <h3>Year of publication: {{book.year_of_publication}}</h3>
+          <h3>Quantity: {{book.quantity_left}}</h3>
+          <h3>Price: {{book.price}}</h3>
+          <h3>Format: {{book.format}}</h3>
+          <h3>Genre: {{book.subject}}</h3>
+      <p>blablabla</p>
+      </div>
+      <div class="row">
+        <h2>User Reviews</h2>
+        <div class="row">
+        <div class="col-md-3">
+
+          <img class="img-responsive" src="http://placehold.it/750x450" alt="">
+          <p>User1</p>
+          <span class="glyphicon glyphicon-heart-empty"></span><span class="glyphicon glyphicon-heart-empty"></span><span class="glyphicon glyphicon-heart-empty"></span><span class="glyphicon glyphicon-heart-empty"></span><span class="glyphicon glyphicon-heart-empty"></span>
+        </div>
+        <div class="col-md-9">
+          <p>Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia cor magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?</p>
+        </div>
+        </div>
+        <br></br>
+        <div class="row">
+        <div class="col-md-3">
+
+          <img class="img-responsive" src="http://placehold.it/750x450" alt="">
+          <p>User2</p>
+          <span class="glyphicon glyphicon-heart-empty"></span><span class="glyphicon glyphicon-heart-empty"></span><span class="glyphicon glyphicon-heart-empty"></span><span class="glyphicon glyphicon-heart-empty"></span><span class="glyphicon glyphicon-heart-empty"></span>
+        </div>
+        <div class="col-md-9">
+          <p>Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia cor magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?</p>
+        </div>
+        </div>
+
+      </div>
+      </div>
+      </div>
+
+      </div>
+      <div class="col col-sm-3">
+          <div id="sidebar" class="affix-top">
+            <ul class="nav nav-stacked">
+                    <li><h3 class="highlight">Order Now!<i class="glyphicon glyphicon-dashboard pull-right"></i></h3></li>
+                    <li><h4>$10000000.00</h4></li>
+                    <li><div class="btn btn-primary">Place Order</div></li>
+        </ul>
+
+               </div>
+          </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+  </div>
+
+
+</header>
+
+
+    </div>
+    <script type="text/javascript">
+    $('#advance_search').click(function(){
+      $('#advance_search_box').toggle("slow")
+    });
+
+    </script>
+
+
+{%endblock%}

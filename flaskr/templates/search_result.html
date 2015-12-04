@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{%block content%}
+
+
+<header class="masthead">
+  <div class="container">
+    <h1>Search Result</h1>
+    <br>
+    <div class="row">
+
+    {%for s in search%}
+      <div class="row">
+      <div class="col-md-4">
+        <br>
+        <img class="img-responsive" src="static/img/{{s.get('genre')}}" alt="">
+      </div>
+      <div class="col-md-8">
+        <div class="row">
+        <h1>{{s.get('title')}}</h1>
+        <h3>{{s.get('author')}}</h3>
+        <p>{{s.get('description'}}</p>
+        </div>
+      </div>
+      </div>
+      <hr>
+        {%endfor%}
+
+
+
+    </div>
+  </div>
+   
+    
+</header>
+<br>
+
+    </div>
+    <script type="text/javascript">
+    $('#advance_search').click(function(){
+      $('#advance_search_box').toggle("slow")
+    });
+
+    </script>
+
+		
+
+
+{%endblock%}
