@@ -12,7 +12,7 @@
       <div class="row">
       <div class="col-md-4">
         <br>
-        <img class="img-responsive" src="http://placehold.it/750x450" alt="">
+        <img class="img-responsive" src="/static/img/{{book.subject}}.jpg" alt="">
       </div>
       <div class="col-md-8">
       <div class="row">
@@ -22,8 +22,8 @@
       <h4>Year of publication: {{book.year_of_publication}}</h4>
           <h4>Quantity: {{book.quantity_left}}</h4>
           <h4>Price: {{book.price}}</h4>
-          <h4>Format: {{book.format}}</h4>
-          <h4>Genre: {{book.subject}}</h4>
+          <h4>Format: {{book.format|capitalize}}</h4>
+          <h4>Subject: {{book.subject|capitalize}}</h4>
       </div>
       {% if rate_books %}
       <div class="row">
@@ -82,8 +82,9 @@
           <div id="sidebar" class="affix-top">
             <ul class="nav nav-stacked">
                     <li><h3 class="highlight">Order Now!<i class="glyphicon glyphicon-dashboard pull-right"></i></h3></li>
-                    <li><h4>$10000000.00</h4></li>
+                    <form method="post">
                     <li><div class="btn btn-primary">Place Order</div></li>
+                    </form>
         </ul>
 
                </div>
