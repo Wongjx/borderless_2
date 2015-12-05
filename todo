@@ -5,9 +5,6 @@ Search:
 - Advanced search => authors, and/or publisher, and/or title, and/or subject
 				  =>  sorted a) by year, or b) by the average score of the feedbacks
 
-Register:
-- Insert new customer into Db table
-
 Profile page:
 • his/her account information
 • his/her full history of orders (book name, number of copies, date etc.)

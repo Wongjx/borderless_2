@@ -42,10 +42,10 @@ def query_db(query, args=(), one=False):
 
 def insert_db (query, args=()):
     try:
-        db = get_db.execute(query, args)
-        db.commit()
+        cur = get_db().execute(query, args)
         return True
-    except:
+    except Exception, e:
+        print e
         return False
 
 @app.before_request
@@ -122,12 +122,19 @@ def signup():
     error = None
     if request.method == 'POST':
         #Username not correct
-        the_username = request.form['username']
-        user = query_db('select * from Customers where login_name = ?', [the_username], one=True)
+        name = request.form['name']
+        username = request.form['username']
+        password = request.form['password']
+        phone = request.form['phone']
+        address = request.form['address']
+        ccn = request.form['ccn']
+        user = query_db('select * from Customers where login_name = ?', [username], one=True)
+        print user
         if user is None:
             ## New user sign up
-            # status =  insert_db ('insert into Customers values ('?,')')
-            flash('Sign up successful!')
+            g.db.execute('insert into Customers (login_name,full_name,password,credit_card_no,address,phone_no) VALUES (?,?,?,?,?,?)',[username,name,password,ccn,address,phone])
+            g.db.commit()
+            flash('Sign up successful')
             return redirect(url_for('login'))
         else:
             ## Existing account with same login name
