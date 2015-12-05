@@ -42,10 +42,10 @@ def query_db(query, args=(), one=False):
 
 def insert_db (query, args=()):
     try:
-        db = get_db.execute(query, args)
-        db.commit()
+        cur = get_db().execute(query, args)
         return True
-    except:
+    except Exception, e:
+        print e
         return False
 
 @app.before_request
@@ -60,17 +60,27 @@ def close_connection(exception):
 
 
 ## ROUTES
-@app.route('/main', methods=['GET','POST'])
-def main():
+@app.route('/main/<login_name>', methods=['GET','POST'])
+def main(login_name):
 
     if request.method == 'POST':
         print request.form
-        isbn=request.form['isbn']
-        return render_template('main.html',isbn=isbn)
+        orders=[] # PT - list of isbn of book cutomers want to order
+        for k in request.form:
+            if 'isbn' in k:
+                isbn=request.form[k]
+
+        return redirect(url_for('order_complete/%s/%s' % date,username ))
     elif request.method == 'GET':
-        error = None
-        book_list = query_db('select * from Books')
-        return render_template('main.html',book_list=book_list)
+        # login_name=request.args['login_name']
+        print login_name
+        if not login_name:
+            return redirect(url_for('login'))
+        else:
+            error = None
+            book_list = query_db('select * from Books')
+            print book_list
+            return render_template('main.html',book_list=book_list, login_name=login_name)
 
 @app.route('/order', methods=['GET','POST'])
 def order():
@@ -83,9 +93,14 @@ def order():
     elif request.method == 'GET':
         return render_template('order_complete.html')
 
-@app.route('/book/<isbn>', methods=['GET'])
-def book(isbn):
+@app.route('/order_complete/<date>/<username>', methods=['GET','POST'])
+def order_complete():
+    return render_template('order_complete.html')
+
+@app.route('/book/<login_name>/<isbn>', methods=['GET'])
+def book(login_name,isbn):
     book = query_db('Select * from Books where isbn = ?', [isbn], one=True)
+    rate=query_db('Select * from Rate_book where isbn = ? and login_name = ?', [isbn,login_name], one=True)
     if book is None:
         error = 'Invalid ISBN'
         return redirect(url_for('main'))
@@ -107,12 +122,19 @@ def signup():
     error = None
     if request.method == 'POST':
         #Username not correct
-        the_username = request.form['username']
-        user = query_db('select * from Customers where login_name = ?', [the_username], one=True)
+        name = request.form['name']
+        username = request.form['username']
+        password = request.form['password']
+        phone = request.form['phone']
+        address = request.form['address']
+        ccn = request.form['ccn']
+        user = query_db('select * from Customers where login_name = ?', [username], one=True)
+        print user
         if user is None:
             ## New user sign up
-            # status =  insert_db ('insert into Customers values ('?,')')
-            flash('Sign up successful!')
+            g.db.execute('insert into Customers (login_name,full_name,password,credit_card_no,address,phone_no) VALUES (?,?,?,?,?,?)',[username,name,password,ccn,address,phone])
+            g.db.commit()
+            flash('Sign up successful')
             return redirect(url_for('login'))
         else:
             ## Existing account with same login name
@@ -135,7 +157,7 @@ def login():
                 session['logged_in'] = True
                 session ['user'] = user
                 flash('You were logged in')
-                return redirect(url_for('main'))
+                return redirect(url_for('main', login_name=the_username))
             else:
                 error = 'Invalid password'
     return render_template('login.html', error=error)

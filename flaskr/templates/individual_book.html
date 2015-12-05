@@ -17,42 +17,63 @@
       <div class="col-md-8">
       <div class="row">
       <h1>Title: {{book.title}}</h1>
-      <h3>Author: {{book.author}}</h3>3>
-      <h3>Publisher: {{book.publisher}}</h3>>
-      <h3>Year of publication: {{book.year_of_publication}}</h3>
-          <h3>Quantity: {{book.quantity_left}}</h3>
-          <h3>Price: {{book.price}}</h3>
-          <h3>Format: {{book.format}}</h3>
-          <h3>Genre: {{book.subject}}</h3>
-      <p>blablabla</p>
+      <h4>Author: {{book.authors}}</h4>
+      <h4>Publisher: {{book.publisher}}</h4>
+      <h4>Year of publication: {{book.year_of_publication}}</h4>
+          <h4>Quantity: {{book.quantity_left}}</h4>
+          <h4>Price: {{book.price}}</h4>
+          <h4>Format: {{book.format}}</h4>
+          <h4>Genre: {{book.subject}}</h4>
       </div>
+      {% if rate_books %}
       <div class="row">
         <h2>User Reviews</h2>
+        {% for rate_book in rate_books %}
         <div class="row">
         <div class="col-md-3">
 
           <img class="img-responsive" src="http://placehold.it/750x450" alt="">
-          <p>User1</p>
-          <span class="glyphicon glyphicon-heart-empty"></span><span class="glyphicon glyphicon-heart-empty"></span><span class="glyphicon glyphicon-heart-empty"></span><span class="glyphicon glyphicon-heart-empty"></span><span class="glyphicon glyphicon-heart-empty"></span>
+          <p>{{rate_book.login_name}}</p>
+          
+          <h2>{{rate_book.score}}</h2>
         </div>
         <div class="col-md-9">
-          <p>Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia cor magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?</p>
+          <p>{{rate_book.comment}}</p>
+          <button class="btn btn-default" name="rating" value="0">Useless</button>
+          <button class="btn btn-default" name="rating" value="1">UseFul</button>
+          <button class="btn btn-default" name="rating" value="2">Very useful</button>
         </div>
         </div>
         <br></br>
-        <div class="row">
-        <div class="col-md-3">
-
-          <img class="img-responsive" src="http://placehold.it/750x450" alt="">
-          <p>User2</p>
-          <span class="glyphicon glyphicon-heart-empty"></span><span class="glyphicon glyphicon-heart-empty"></span><span class="glyphicon glyphicon-heart-empty"></span><span class="glyphicon glyphicon-heart-empty"></span><span class="glyphicon glyphicon-heart-empty"></span>
-        </div>
-        <div class="col-md-9">
-          <p>Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia cor magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?</p>
-        </div>
-        </div>
+        {% endfor %}
 
       </div>
+      {% endif %}
+      {% if able_to_rate %}
+      <div class="row">
+        <h1>Rate this book!</h1>
+        
+        <label for="score" style="color:black">Score </label>
+        <select class="form-control" style="width:50%">
+          <option name="score" value="0">0</option>
+          <option name="score" value="1">1</option>
+          <option name="score" value="2">2</option>
+          <option name="score" value="0">3</option>
+          <option name="score" value="1">4</option>
+          <option name="score" value="2">5</option>
+          <option name="score" value="0">6</option>
+          <option name="score" value="1">7</option>
+          <option name="score" value="2">8</option>
+          <option name="score" value="0">9</option>
+          <option name="score" value="1">10</option>
+        </select>
+        <hr>
+        <textarea style="width:100%;height:100px"></textarea>
+        <hr>
+        <button class="btn btn-default">Submit Rating!</button>
+        <br><br>
+      </div>
+      {% endif %}
       </div>
       </div>
 

@@ -1,7 +1,23 @@
-{% extends "base.html" %}
-
-{%block content%}
-
+<html lang="en">
+<head>
+    {% block head %}
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Borderless</title>
+    <meta name="generator" content="Bootply" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link href="/static/css/styles.css" rel="stylesheet">
+        <script src="static/js/jquery.js"></script>
+        <!--<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>-->
+      <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/scripts.js"></script>
+    {% endblock %}
+</head>
+<body>
 <div class="container" style="text-align:center">
 
 <h1 class="red">Sign up with us!</h1>
@@ -29,24 +45,24 @@
       <div class="form-group">
         <label class="col-lg-4 control-label left-align">Password</label>
 
-          <input type="password" class="form-control" name="name" id="password" placeholder="Password">
+          <input type="password" class="form-control" name="password" id="password" placeholder="Password">
 
       </div>
       <div class="form-group">
         <label class="col-lg-4 control-label left-align">Phone Number</label>
-          <input type="tel" class="form-control" name="name" id="phone_no" placeholder="Phone Number">
+          <input type="tel" class="form-control" name="phone" id="phone_no" placeholder="Phone Number">
 
       </div>
       <div class="form-group">
         <label class="col-lg-4 control-label left-align">Address</label>
 
-          <input type="text" class="form-control" name="name" id="address" placeholder="Address">
+          <input type="text" class="form-control" name="address" id="address" placeholder="Address">
 
       </div>
       <div class="form-group">
         <label class="col-lg-4 control-label left-align">Credit Card Number</label>
 
-          <input type="text" class="form-control" name="name" id="credit_card_no" placeholder="Credit Card Number">
+          <input type="text" class="form-control" name="ccn" id="credit_card_no" placeholder="Credit Card Number">
 
       </div>
 
@@ -57,5 +73,5 @@
     </form>
 </div></div>
 
-<!-- script references -->
-{%endblock%}
+</body>
+</html>
