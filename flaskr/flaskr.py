@@ -3,6 +3,7 @@
 import sqlite3
 from contextlib import closing
 from flask import Flask,request,session,g,redirect,url_for, abort, render_template,flash
+import datetime, time
 
 #configuration
 # DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless//flaskr//tmp//flaskr.db'
@@ -64,13 +65,18 @@ def close_connection(exception):
 def main(login_name):
 
     if request.method == 'POST':
-        print request.form
-        orders=[] # PT - list of isbn of book cutomers want to order
+        order_date=datetime.datetime.now()
+        order_date=order_date.strftime("%Y-%m-%d|%H:%M:%S")
+        status="processing"
+        quantity=1
         for k in request.form:
             if 'isbn' in k:
                 isbn=request.form[k]
-
-        return redirect(url_for('order_complete/%s/%s' % date,username ))
+                g.db.execute('update Books set quantity_left = quantity_left - 1 where isbn=?',[isbn]) #decrement number of book available
+                g.db.execute('insert into Order_book (login_name,isbn,order_date,status,quantity) VALUES (?,?,?,?,?)',[login_name,isbn,order_date,status,quantity]) #insert order
+                g.db.commit()
+                # time.sleep(1)                
+        return redirect(url_for('order_complete',date=order_date,login_name=login_name)) # redirect to order_complete with date and username
     elif request.method == 'GET':
         # login_name=request.args['login_name']
         print login_name
@@ -78,7 +84,7 @@ def main(login_name):
             return redirect(url_for('login'))
         else:
             error = None
-            book_list = query_db('select * from Books')
+            book_list = query_db('select * from Books where quantity_left>0')
             print book_list
             return render_template('main.html',book_list=book_list, login_name=login_name)
 
@@ -93,9 +99,14 @@ def order():
     elif request.method == 'GET':
         return render_template('order_complete.html')
 
-@app.route('/order_complete/<date>/<username>', methods=['GET','POST'])
-def order_complete():
-    return render_template('order_complete.html')
+@app.route('/order_complete/<date>/<login_name>', methods=['GET','POST'])
+def order_complete(date,login_name):
+    # retreive orders from date and login_name
+    orders = query_db('Select * from Order_book, Books where login_name = ? and order_date=? and Order_book.isbn==Books.isbn', [login_name,date])
+    total_price=0
+    for order in orders:
+        total_price+=order["price"] # calculate total price
+    return render_template('order_complete.html',orders=orders,date=date,total_price=total_price)
 
 @app.route('/book/<login_name>/<isbn>', methods=['GET'])
 def book(login_name,isbn):
