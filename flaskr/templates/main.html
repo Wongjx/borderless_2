@@ -75,13 +75,12 @@ $('#myTable').DataTable({
 var init_price=0
 $(".book").click(function(e){
     test=$(this)
-    var price = $(this).parent().siblings()[5].innerHTML
+    var price = $(this).parent().siblings()[4].innerHTML
     if($(this).is(":checked")){
         init_price+=parseFloat(price)
     }else{
         init_price-=parseFloat(price)
     };
-    $('#total_price').text(init_price)
     console.log("Add")
 });
 

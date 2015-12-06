@@ -25,23 +25,30 @@
           <h4>Format: {{book.format|capitalize}}</h4>
           <h4>Subject: {{book.subject|capitalize}}</h4>
       </div>
-      {% if rate_books %}
+      {% if opinions %}
       <div class="row">
         <h2>User Reviews</h2>
-        {% for rate_book in rate_books %}
+        {% for opinion in opinions %}
         <div class="row">
         <div class="col-md-3">
 
-          <img class="img-responsive" src="http://placehold.it/750x450" alt="">
-          <p>{{rate_book.login_name}}</p>
+          <h1><span class="glyphicon glyphicon-user"></span></h1>
+          <p>{{opinion.login_name}}</p>
           
-          <h2>{{rate_book.score}}</h2>
+          
         </div>
         <div class="col-md-9">
-          <p>{{rate_book.comment}}</p>
+          <h2>Rating: {{opinion.score}}</h2>
+          <p>{{opinion.comment}}</p>
+          <h4>Usefulness: {{opinion.avg_rating}}</h4>
+          {% if opinion.login_name!=session.user.login_name%}
+          <form method="post">
           <button class="btn btn-default" name="rating" value="0">Useless</button>
           <button class="btn btn-default" name="rating" value="1">UseFul</button>
           <button class="btn btn-default" name="rating" value="2">Very useful</button>
+          </form>
+          {% endif %}
+
         </div>
         </div>
         <br></br>
@@ -49,7 +56,7 @@
 
       </div>
       {% endif %}
-      {% if able_to_rate %}
+      {% if exist_comment %}
       <div class="row">
         <h1>Rate this book!</h1>
         
@@ -81,10 +88,11 @@
       <div class="col col-sm-3">
           <div id="sidebar" class="affix-top">
             <ul class="nav nav-stacked">
-                    <li><h3 class="highlight">Order Now!<i class="glyphicon glyphicon-dashboard pull-right"></i></h3></li>
-                    <form method="post">
-                    <li><div class="btn btn-primary">Place Order</div></li>
-                    </form>
+            <li><h3 class="highlight">Order Now!<i class="glyphicon glyphicon-dashboard pull-right"></i></h3></li>
+            <form method="post">
+            <li><button class="btn btn-primary">Place Order</button></li>
+            <input class="hidden" name="isbn" value="{{book.isbn}}">
+            </form>
         </ul>
 
                </div>
