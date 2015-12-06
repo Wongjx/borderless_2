@@ -21,30 +21,30 @@
         </div>
 
         <div class="row" align="center">
-            <form method="POST" id="order_multiple">
+            <form method="POST" id="order_multiple" action="/order">
             <table id="myTable" class="display" width="100%"></table>
             <button class="btn btn-primary">ORDER NOW!</button>
         </form>
         </div>
-       
 
-        
-       
 
-        
+
+
+
+
 
     </div>
 <script type="text/javascript">
 $('#advance_search').click(function(){
   $('#advance_search_box').toggle("slow")
 });
-    
+
 var dataSet=[]
 var number=0
 {% for book in book_list %}
 var each_data=[]
 
-each_data.push("<a href='"+"/book/"+"{{login_name}}"+"/{{book.isbn}}"+"''>{{book.title}}</a>")
+each_data.push("<a href='"+"/book/"+"{{book.isbn}}"+"''>{{book.title}}</a>")
 each_data.push("{{book.authors}}")
 each_data.push("{{book.publisher}}")
 each_data.push("{{book.year_of_publication}}")

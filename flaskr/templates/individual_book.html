@@ -32,8 +32,9 @@
         <div class="row">
         <div class="col-md-3">
 
-          <h1><span class="glyphicon glyphicon-user"></span></h1>
-          <p>{{opinion.login_name}}</p>
+
+        <h1><span class="glyphicon glyphicon-user"></span></h1>
+        <p>{{opinion.login_name}}</p>
           
           
         </div>
@@ -59,7 +60,7 @@
       {% if exist_comment %}
       <div class="row">
         <h1>Rate this book!</h1>
-        
+
         <label for="score" style="color:black">Score </label>
         <select class="form-control" style="width:50%">
           <option name="score" value="0">0</option>
@@ -88,11 +89,19 @@
       <div class="col col-sm-3">
           <div id="sidebar" class="affix-top">
             <ul class="nav nav-stacked">
-            <li><h3 class="highlight">Order Now!<i class="glyphicon glyphicon-dashboard pull-right"></i></h3></li>
+
+<!--             <li><h3 class="highlight">Order Now!<i class="glyphicon glyphicon-dashboard pull-right"></i></h3></li>
             <form method="post">
             <li><button class="btn btn-primary">Place Order</button></li>
             <input class="hidden" name="isbn" value="{{book.isbn}}">
-            </form>
+            </form> -->
+                    <li><h3 class="highlight">Order Now!<i class="glyphicon glyphicon-dashboard pull-right"></i></h3></li>
+                    <!-- <form method="post" action="/order">
+                      <input type="text" name="quantity" id="quantity" value="default" readonly = "True">
+                      <input type="range" name="quantity" id="quantity">
+                      <li><div class="btn btn-primary">Place Order</div></li>
+                    </form> -->
+                    <button class="btn btn-primary" id="order_button" name="order_button">Place Order</button>
         </ul>
 
                </div>
@@ -113,6 +122,29 @@
     $('#advance_search').click(function(){
       $('#advance_search_box').toggle("slow")
     });
+
+    // this is the id of the form
+    $("#order_button").click(function(e) {
+        var url = "/order"; // the script where you handle the form input.
+        var data = {"isbn":"{{book.isbn}}"}
+
+        $.ajax({
+               type: "POST",
+               url: url,
+               data: data,
+               success: function(data)
+               {
+                 document.write(data);
+                 document.close();
+               },
+               error: function(data)
+               {
+                 alert(data)
+               },
+             });
+        // e.preventDefault(); // avoid to execute the actual submit of the form.
+    });
+
 
     </script>
 
