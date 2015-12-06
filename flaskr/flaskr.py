@@ -66,20 +66,20 @@ def close_connection(exception):
 @app.route('/main', methods=['GET','POST'])
 def main():
     login_name = session['user']['login_name']
-    if request.method == 'POST':
-        order_date=datetime.datetime.now()
-        order_date=order_date.strftime("%Y-%m-%d|%H:%M:%S")
-        status="processing"
-        quantity=1
-        for k in request.form:
-            if 'isbn' in k:
-                isbn=request.form[k]
-                g.db.execute('update Books set quantity_left = quantity_left - 1 where isbn=?',[isbn]) #decrement number of book available
-                g.db.execute('insert into Order_book (login_name,isbn,order_date,status,quantity) VALUES (?,?,?,?,?)',[login_name,isbn,order_date,status,quantity]) #insert order
-                g.db.commit()
-                # time.sleep(1)
-        return redirect(url_for('order_complete',date=order_date,login_name=login_name)) # redirect to order_complete with date and username
-    elif request.method == 'GET':
+    # if request.method == 'POST':
+    #     order_date=datetime.datetime.now()
+    #     order_date=order_date.strftime("%Y-%m-%d|%H:%M:%S")
+    #     status="processing"
+    #     quantity=1
+    #     for k in request.form:
+    #         if 'isbn' in k:
+    #             isbn=request.form[k]
+    #             g.db.execute('update Books set quantity_left = quantity_left - 1 where isbn=?',[isbn]) #decrement number of book available
+    #             g.db.execute('insert into Order_book (login_name,isbn,order_date,status,quantity) VALUES (?,?,?,?,?)',[login_name,isbn,order_date,status,quantity]) #insert order
+    #             g.db.commit()
+    #             # time.sleep(1)
+    #     return redirect(url_for('order_complete',date=order_date,login_name=login_name)) # redirect to order_complete with date and username
+    if request.method == 'GET':
         # login_name=request.args['login_name']
         print login_name
         if not session['logged_in']:
@@ -90,14 +90,28 @@ def main():
             print book_list
             return render_template('main.html',book_list=book_list)
 
-@app.route('/order', methods=['GET','POST'])
+@app.route('/order', methods=['POST'])
 def order():
+    login_name = session['user']['login_name']
     if request.method == 'POST':
-        g.db.execute('insert into entries (title, text) values (?, ?)',
-                     [request.form['title'], request.form['text']])
-        g.db.commit()
-        flash('Order was successfully posted')
-        return redirect(url_for('order'))
+        order_date=datetime.datetime.now()
+        order_date=order_date.strftime("%Y-%m-%d|%H:%M:%S")
+        status="processing"
+        quantity=1
+        # print "/n"
+        # print "Request.form ===== " +str(request.form)
+        # print "/n"
+        if len(request.form) <=1:
+            return redirect
+        for k in request.form:
+            if 'isbn' in k:
+                isbn=request.form[k]
+                # g.db.execute('update Books set quantity_left = quantity_left - 1 where isbn=?',[isbn]) #decrement number of book available
+                g.db.execute('insert into Order_book (login_name,isbn,order_date,status,quantity) VALUES (?,?,?,?,?)',[login_name,isbn,order_date,status,quantity]) #insert order
+                g.db.commit()
+                # time.sleep(1)
+        return redirect(url_for('order_complete',date=order_date,login_name=login_name)) # redirect to order_complete with date and username
+
     elif request.method == 'GET':
         return render_template('order_complete.html')
 
@@ -110,22 +124,22 @@ def order_complete(date,login_name):
         total_price+=order["price"] # calculate total price
     return render_template('order_complete.html',orders=orders,date=date,total_price=total_price)
 
-@app.route('/book/<isbn>', methods=['GET'])
+@app.route('/book/<isbn>', methods=['GET','POST'])
 def book(isbn):
-    book = db_query('Select * from Books where isbn = ?', [isbn], one=True)
-    rate=db_query('Select * from Rate_book where isbn = ? and login_name = ?', [isbn,session['user']['login_name']], one=True)
-    if book is None:
-        error = 'Invalid ISBN'
-        return redirect(url_for('main'))
-    return render_template('individual_book.html',book=book)
+    if request.method == 'GET':
+            book = db_query('Select * from Books where isbn = ?', [isbn], one=True)
+            rate=db_query('Select * from Rate_book where isbn = ? and login_name = ?', [isbn,session['user']['login_name']], one=True)
+            if book is None:
+                error = 'Invalid ISBN'
+                return redirect(url_for('main'))
+            return render_template('individual_book.html',book=book)
 
 @app.route('/search', methods=['GET','POST'])
 def search():
     error = None
     if request.method == 'POST':
         book_name = request.form['book_name']
-        book = db_query('Select * from Books where title like ?', ['%'+book_name+'%'], one=True)
-        print "-------- PRINT HERE----------"+str(book)
+        book = db_query('Select * from Books where title like ?', ['%'+book_name+'%'])
         if book is None:
             error = 'Invalid ISBN'
             return render_template('search_result.html',error=error)
