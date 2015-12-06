@@ -1,4 +1,3 @@
-drop table if exists enteries;
 drop table if exists Books;
 drop table if exists Authors;
 drop table if exists Writes;
@@ -7,16 +6,9 @@ drop table if exists Rate_book;
 drop table if exists Rate_opinion;
 drop table if exists Order_book;
 
--- create table entries (
---   id integer primary key autoincrement,
---   title text not null,
---   text tetx not null
--- );
-
-
-
 create table Books (isbn char(14) primary key,
                     title varchar(128) not null,
+                    authors varchar(256),
                     publisher varchar(64),
                     year_of_publication integer,
                     quantity_left integer,
@@ -27,7 +19,7 @@ create table Books (isbn char(14) primary key,
 
 create table Authors (author_id integer primary key,
                       name varchar(128));
-                      
+
 create table Customers (login_name varchar(32) primary key,
                         full_name varchar(128) not null,
                         password varchar(16) not null,
@@ -72,5 +64,4 @@ create table Rate_opinion (ro_id integer primary key autoincrement,
                            foreign key (isbn) references Rate_book,
                            check (rated_id <> rater_id));
 
-
-
+Insert into Books values ('978-1449389673', 'Photoshop Elements 9: The Missing Manual','Barbara Brundage', 'Pogue Press',1992,5,20,'hardcover','keywords none', 'Computer');

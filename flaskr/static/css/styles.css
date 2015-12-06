@@ -17,7 +17,7 @@ header {
   #sidebar.affix-top {
       position: static;
   }
-  
+
   #sidebar.affix {
       position: fixed;
       top: 0;
@@ -50,7 +50,7 @@ a,a:hover {
 .highlight {
 	color:#ff3333;
 }
-  
+
 h3.highlight  {
 	padding-top:13px;
     padding-bottom:14px;
@@ -70,7 +70,7 @@ h3.highlight  {
   	border-left:1px solid #ee3333;
 }
 .navbar-nav > li > a:hover, .navbar-nav > li > a:focus {
-    color:#666666; 
+    color:#666666;
 }
 .navbar-nav > li:last-child > a {
   	border-right:1px solid #ee3333;
@@ -111,7 +111,7 @@ h3.highlight  {
 	color:#fff;
     border-width:0;
 }
-  
+
 .navbar-toggle:hover {
 	background-color:#fff;
 }
@@ -130,4 +130,18 @@ h3.highlight  {
 
 .left-align{
   text-align: left;
+}
+
+.error{
+	color: #DC143C
+}
+
+.flashes{
+	text-align: center;
+}
+
+.header_title{
+		color:#fff;;
+		margin-top:18px;
+		margin-bottom: 9px;
 }
