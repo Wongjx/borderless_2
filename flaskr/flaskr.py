@@ -120,7 +120,6 @@ def order_complete():
 
 @app.route('/book/<isbn>', methods=['GET','POST'])
 def book(isbn):
-
     login_name=session['user']['login_name']
     if not login_name:
         redirect(url_for('login'))
@@ -150,7 +149,21 @@ def book(isbn):
                 else:
                     avg_rating="Useless"
                 opinion['avg_rating']=avg_rating
-
+        if request.method=='POST':
+            action=request.form['action']
+            if action=='find_reviews':
+                n=request.form['n']
+                #sql for find top n reviews
+            elif action=='rate_review':
+                rating=request.form['rating']
+                opinion_id=request.form['opinion_id']
+                #sql to rate opinion
+            elif action=='rate_book':
+                score=request.form['score']
+                comment=request.form['comment']
+                date=datetime.datetime.now()
+                date=date.strftime("%Y-%m-%d|%H:%M:%S")
+                # sql to rate book
         return render_template('individual_book.html',book=book,opinions=opinions,exist_comment=exist_comment,avg_score=avg_score)
 
 @app.route('/search', methods=['GET','POST'])

@@ -27,7 +27,12 @@
       </div>
       {% if opinions %}
       <div class="row">
-        <h2 style="color:#FF3333">User Reviews</h2>
+        <h2 style="color:#FF3333">User Reviews</h2> 
+        <form method="post">
+        <input type="integer" placeholder="1-{{opinions|count}}" name="n">
+        <button class="btn btn-default" id="most_useful">most useful review</button>
+        <input class="hidden" name='action' value="find_reviews">
+        </form>
         <h3>Average Rating: {{avg_score}}</h3>
         {% for opinion in opinions %}
         <div class="row">
@@ -48,6 +53,8 @@
           <button class="btn btn-default" name="rating" value="0">Useless</button>
           <button class="btn btn-default" name="rating" value="1">UseFul</button>
           <button class="btn btn-default" name="rating" value="2">Very useful</button>
+          <input class="hidden" name='opinion_id' value="{{opinion.ro_id}}">
+          <input class="hidden" name='action' value="rate_review">
           </form>
           {% endif %}
 
@@ -77,8 +84,9 @@
           <option name="score" value="1">10</option>
         </select>
         <hr>
-        <textarea style="width:100%;height:100px" maxlength="100"></textarea>
+        <textarea style="width:100%;height:100px" maxlength="100" name="comment"></textarea>
         <hr>
+        <input class="hidden" name='action' value="rate_book">
         <button class="btn btn-default">Submit Rating!</button>
         </form>
         <br><br>
