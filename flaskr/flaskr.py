@@ -4,11 +4,12 @@ import sqlite3
 from contextlib import closing
 from flask import Flask,request,session,g,redirect,url_for, abort, render_template,flash
 import datetime, time
+import re
 
 #configuration
-# DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless//flaskr//tmp//flaskr.db'
+DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless_2//flaskr//tmp//flaskr.db'
 # DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
-DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
+# DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
 DEBUG = True
 SECRET_KEY = 'development key'
 USERNAME = 'admin'
@@ -49,7 +50,7 @@ def db_insert (query, args=()):
         return True
     except Exception, e:
         print e
-        return False
+        return e
 def find_authors(isbn):
     author_list=db_query('select name from Authors where author_id in (select author_id from Writes where isbn==?)',[isbn])
     authors=""
@@ -85,7 +86,7 @@ def main():
                 book['authors']=find_authors(book['isbn'])
             return render_template('main.html',book_list=book_list)
 
-@app.route('/order', methods=['POST'])
+@app.route('/order', methods=['GET','POST'])
 def order():
     login_name = session['user']['login_name']
     if request.method == 'POST':
@@ -114,16 +115,9 @@ def order():
     elif request.method == 'GET':
         return render_template('order_complete.html')
 
-@app.route('/order_complete/<date>/<login_name>', methods=['GET','POST'])
-def order_complete(date,login_name):
-    # retreive orders from date and login_name
-    orders = db_query('Select * from Order_book, Books where login_name = ? and order_date=? and Order_book.isbn==Books.isbn', [login_name,date])
-    total_price=0
-    total_quantity=0
-    for order in orders:
-        total_price+=order["price"] # calculate total price
-        total_quantity+=order["quantity"]
-    return render_template('order_complete.html',orders=orders,date=date,total_price=total_price,total_quantity=total_quantity)
+@app.route('/order_complete/<date>/<username>', methods=['GET','POST'])
+def order_complete():
+    return render_template('order_complete.html')
 
 @app.route('/book/<isbn>', methods=['GET','POST'])
 def book(isbn):
@@ -217,7 +211,9 @@ def signup():
             ## New user sign up
             # g.db.execute('insert into Customers (login_name,full_name,password,credit_card_no,address,phone_no) VALUES (?,?,?,?,?,?)',[username,name,password,ccn,address,phone])
             # g.db.commit()
-            db_insert('insert into Customers (login_name,full_name,password,credit_card_no,address,phone_no) VALUES (?,?,?,?,?,?)',[username,name,password,ccn,address,phone])
+            e = db_insert('insert into Customers (login_name,full_name,password,credit_card_no,address,phone_no) VALUES (?,?,?,?,?,?)',[username,name,password,ccn,address,phone])
+            if e!=True:
+                return render_template('signup.html',error=str(e))
             flash('Sign up successful')
             return redirect(url_for('login'))
         else:
@@ -233,6 +229,13 @@ def login():
         #Username not correct
         the_username = request.form['username']
         password = request.form['password']
+        if the_username == USERNAME:
+            if password == PASSWORD:
+                return redirect(url_for('admin'))
+                # return render_template('admin inventory.html')
+            else:
+                return render_template('login.html',error= 'Invalid password')
+        # user = query_db('select * from Customers where login_name = ?', [the_username], one=True)
         user = db_query('select * from Customers where login_name = ?', [the_username], one=True)
         if user is None:
             error = 'Invalid Username'
@@ -253,6 +256,48 @@ def logout():
     session.pop('user', None)
     flash('You were logged out')
     return redirect(url_for('login'))
+
+#### Admin Routes/Pages
+@app.route('/admin', methods=['GET','POST'])
+def admin():
+    if request.method == 'POST':
+        return render_template('admin.html')
+    else:
+        return render_template('admin.html')
+
+@app.route('/admin/newbook', methods=['GET','POST'])
+def admin_newbook():
+    if request.method == 'POST':
+        isbn = request.form['isbn']
+        title = request.form['title']
+        authors = request.form['authors']
+        authors.replace(" ","")
+        authorlist = re.split(';',authors)
+        subject = request.form['subject']
+        publisher = request.form['publisher']
+        price = request.form['price']
+        year_published = request.form['year_published']
+        format = request.form['format']
+        quantity = request.form['quantity']
+        e = db_insert('insert into Books (isbn,title,publisher,year_of_publication,quantity_left,price,format,subject) VALUES (?,?,?,?,?,?,?,?)',[isbn,title,publisher,year_published,quantity,price,format,subject])
+        if e!= True:
+            return render_template('admin_newbook.html', error = str(e))
+        # for author in authorlist:
+        #     db_insert()
+        flash('Book successfully added')
+        return render_template('admin.html')
+
+    elif request.method == 'GET':
+        return render_template('admin_newbook.html')
+
+@app.route('/admin/inventory', methods=['GET','POST'])
+def admin_invent():
+    return render_template('admin inventory.html')#, error = 'Admin Inventory: Work in progress')
+
+@app.route('/admin/statistics', methods=['GET','POST'])
+def admin_stats():
+    return render_template('admin.html', error = 'Admin Statistics: Work in progress')
+
 
 if __name__ == '__main__':
     app.run()

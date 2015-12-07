@@ -6,297 +6,283 @@
     <title>My-BookStore</title>
     <meta name="generator" content="Bootply" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href="css/bootstrap.min.css" rel="stylesheet">    
-    <link href="css/datatable.css" rel="stylesheet">    
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/css/jquery.dataTables.min.css" rel="stylesheet">
 
+      <!--[if lt IE 9]>
+        <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+         
+      <link href="static/css/styles.css" rel="stylesheet">
+      
+    </head>
+    <body>
+ 
+<header class="masthead">
+  <div class="container">
+    <div class="row">
+      <div class="col col-sm-6">
+        <h1><a href="#" title="scroll down for your viewing pleasure">Welcome {{session.user.login_name}}</a>
+          <!-- <p class="lead">2-column Layout + Theme for Bootstrap 3</p></h1> -->
+        </h1>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+  <div class="row">
+      <div class="col col-sm-12">
+        <h1 class="page-header">New Arrivals!<span class="glyphicon glyphicon-heart-empty"></span></h1>
+        <div class="panel">
+        <div class="panel-body">
 
-<link href="css/styles.css" rel="stylesheet">
+          <div class="row">
+           
+            <div class="col-md-3 portfolio-item">
+                <a href="#">
+                    <img class="img-responsive" src="http://placehold.it/750x450" alt="">
+                </a>
+            </div>
+            <div class="col-md-3 portfolio-item">
+                <a href="#">
+                    <img class="img-responsive" src="http://placehold.it/750x450" alt="">
+                </a>
+            </div>
+        </div>
+        </div>
+        </div>
 
-</head>
-<body>
+      </div>
+    </div>
+  </div>
 
-  <header class="masthead">
     <div class="container">
-      <div class="row">
-        <div class="col col-sm-6">
-          <h1><a href="#" title="scroll down for your viewing pleasure">Welcome {{session.user.login_name}}</a>
-            <!-- <p class="lead">2-column Layout + Theme for Bootstrap 3</p></h1> -->
-          </div>
-        </div>
-      </div>
-      <div class="container">
-        <div class="row">
-          <div class="col col-sm-12">
-            <h1 class="page-header">New Arrivals!<span class="glyphicon glyphicon-heart-empty"></span></h1>
-            <div class="panel">
-              <div class="panel-body">
+    <div class="row">
+      <div class="col col-sm-12">
+        <h1 class="page-header">Hot Books!<span class="glyphicon glyphicon-heart-empty"></span></h1>
+        <div class="panel">
+        <div class="panel-body">
 
-                <div class="row">
-
-                  <div class="col-md-3 portfolio-item">
-                    <a href="#">
-                      <img class="img-responsive" src="http://placehold.it/750x450" alt="">
-                    </a>
-                  </div>
-                  <div class="col-md-3 portfolio-item">
-                    <a href="#">
-                      <img class="img-responsive" src="http://placehold.it/750x450" alt="">
-                    </a>
-                  </div>
-                </div>
-              </div>
+          <div class="row">
+            <div class="col-md-3 portfolio-item">
+                <a href="#">
+                    <img class="img-responsive" src="http://placehold.it/750x450" alt="">
+                </a>
             </div>
-
-          </div>
-        </div>
-      </div>
-
-      <div class="container">
-        <div class="row">
-          <div class="col col-sm-12">
-            <h1 class="page-header">Hot Books!<span class="glyphicon glyphicon-heart-empty"></span></h1>
-            <div class="panel">
-              <div class="panel-body">
-
-                <div class="row">
-                  <div class="col-md-3 portfolio-item">
-                    <a href="#">
-                      <img class="img-responsive" src="http://placehold.it/750x450" alt="">
-                    </a>
-                  </div>
-                  <div class="col-md-3 portfolio-item">
-                    <a href="#">
-                      <img class="img-responsive" src="http://placehold.it/750x450" alt="">
-                    </a>
-                  </div>
-                  <div class="col-md-3 portfolio-item">
-                    <a href="#">
-                      <img class="img-responsive" src="http://placehold.it/750x450" alt="">
-                    </a>
-                  </div>
-                  <div class="col-md-3 portfolio-item">
-                    <a href="#">
-                      <img class="img-responsive" src="http://placehold.it/750x450" alt="">
-                    </a>
-                  </div>
-                </div>
-              </div>
+            <div class="col-md-3 portfolio-item">
+                <a href="#">
+                    <img class="img-responsive" src="http://placehold.it/750x450" alt="">
+                </a>
             </div>
-
-          </div>
+            <div class="col-md-3 portfolio-item">
+                <a href="#">
+                    <img class="img-responsive" src="http://placehold.it/750x450" alt="">
+                </a>
+            </div>
+            <div class="col-md-3 portfolio-item">
+                <a href="#">
+                    <img class="img-responsive" src="http://placehold.it/750x450" alt="">
+                </a>
+            </div>
         </div>
-      </div>
-    </header>
+        </div>
+        </div>
 
-    <!-- <header class="masthead"> -->
+      </div>
+    </div>
+  </div>
+</header>
+
+  <!-- <header class="masthead"> -->
     <div class="container">
       <div class="row">
         <div class="col col-sm-6">
           <h1 ><a href="#" title="Inventory page for admin">Inventory</a>
+          </h1>
           </div>
-          >>>>>>> e86433c9cac4e146457b1ddaece57e156662f789
+       </div>
+        
+        <link href="static/css/styles.css" rel="stylesheet">
+        
+      </head>
+      <body>
+       
 
-          <link href="css/styles.css" rel="stylesheet">
-
-        </head>
-        <body>
-
-
-          <!-- <header class="masthead"> -->
+        <!-- <header class="masthead"> -->
+        <div class="container">
+          <div class="row">
+            <div class="col col-sm-6">
+              <h1 ><a href="#" title="Inventory page for admin">Inventory</a>
+              </div>
+              
+            </div>
+          </div> 
+          <!-- </header> -->
           <div class="container">
-            <div class="row">
-              <div class="col col-sm-6">
-                <h1 ><a href="#" title="Inventory page for admin">Inventory</a>
-                </div>
+            <button style="float:right;" type="submit" id="add_stock">Submit</button> 
 
-              </div>
-            </div> 
-            <!-- </header> -->
-            <div class="container">
-              <button style="float:right;" type="submit" id="add_stock">Add Stock</button> 
-
-            </div>
+          </div>
 
 
-            <div class="container">
-              <div class="row-fluid">
-                <table id="example" class="display" cellspacing="0">
-                  <thead>
-                    <tr>
-                      <th>ISBN</th>
-                      <th>Title</th>   
-                      <th>Publisher</th>
-                      <th>Quantity</th>   
-                      <th>Price</th>
-                      <th>Year Published</th>
-                      <th>Format</th>
-                      <th>Tags</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td id="ISBN1" name="ISBN1">ISBN</td>
-                      <td id="Title1" name="Title1">Title</td>   
-                      <td id="Publisher1" name="Publisher1">Publisher</td>
-                      <td id="Quantity1" name="Quantity1">Quantity</td>   
-                      <td id="Price1" name="Price1">Price</td>
-                      <td id="Year1" name="Year1">Year Published</td>
-                      <td id="Format1" name="Format1">Format</td>
-                      <td id="Tags1" name="Tags1">Tags</td>
-                    </tr>
-                    <tr>
-                      <td id="ISBN2" name="ISBN2">ISBN</td>
-                      <td id="Title2" name="Title2">Title</td>   
-                      <td id="Publisher2" name="Publisher2">Publisher</td>
-                      <td id="Quantity2" name="Quantity2">Quantity</td>   
-                      <td id="Price2" name="Price2">Price</td>
-                      <td id="Year2" name="Year2">Year Published</td>
-                      <td id="Format2" name="Format2">Format</td>
-                      <td id="Tags2" name="Tags2">Tags</td>
-                    </tr>
-                    <tr>
-                      <td id="ISBN3" name="ISBN3">ISBN</td>
-                      <td id="Title3" name="Title3">Title</td>   
-                      <td id="Publisher3" name="Publisher3">Publisher</td>
-                      <td id="Quantity3" name="Quantity3">Quantity</td>   
-                      <td id="Price3" name="Price3">Price</td>
-                      <td id="Year3" name="Year3">Year Published</td>
-                      <td id="Format3" name="Format3">Format</td>
-                      <td id="Tags3" name="Tags3">Tags</td>
-                    </tr>
+          <div class="container">
+            <div class="row-fluid">
+              <table id="example" class="display" cellspacing="0">
+                <thead>
+                  <tr>
+                    <th>ISBN</th>
+                    <th>Title</th>   
+                    <th>Publisher</th>
+                    <th>Quantity</th>   
+                    <th>Price</th>
+                    <th>Year Published</th>
+                    <th>Format</th>
+                    <th>Tags</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>ISBN</td>
+                    <td>Title</td>   
+                    <td>Publisher</td>
+                    <td>Quantity</td>   
+                    <td>Price</td>
+                    <td>Year Published</td>
+                    <td>Format</td>
+                    <td>Tags</td>
+                  </tr>
+                  <tr>
+                    <td>aSBN</td>
+                    <td>Title</td>   
+                    <td>Publisher</td>
+                    <td>Quantity</td>   
+                    <td>Price</td>
+                    <td>Year Published</td>
+                    <td>Format</td>
+                    <td>Tags</td>
+                  </tr>
+                  <tr>
+                    <td>kSBN</td>
+                    <td>Title</td>   
+                    <td>Publisher</td>
+                    <td>Quantity</td>   
+                    <td>Price</td>
+                    <td>Year Published</td>
+                    <td>Format</td>
+                    <td>Tags</td>
+                  </tr>
+                  <tr>
+                    <td>aSBN</td>
+                    <td>Title</td>   
+                    <td>Publisher</td>
+                    <td>Quantity</td>   
+                    <td>Price</td>
+                    <td>Year Published</td>
+                    <td>Format</td>
+                    <td>Tags</td>
+                  </tr>
+                  <tr>
+                    <td>kSBN</td>
+                    <td>Title</td>   
+                    <td>Publisher</td>
+                    <td>Quantity</td>   
+                    <td>Price</td>
+                    <td>Year Published</td>
+                    <td>Format</td>
+                    <td>Tags</td>
+                  </tr><tr>
+                  <td>aSBN</td>
+                  <td>Title</td>   
+                  <td>Publisher</td>
+                  <td>Quantity</td>   
+                  <td>Price</td>
+                  <td>Year Published</td>
+                  <td>Format</td>
+                  <td>Tags</td>
+                </tr>
+                <tr>
+                  <td>kSBN</td>
+                  <td>Title</td>   
+                  <td>Publisher</td>
+                  <td>Quantity</td>   
+                  <td>Price</td>
+                  <td>Year Published</td>
+                  <td>Format</td>
+                  <td>Tags</td>
+                </tr><tr>
+                <td>aSBN</td>
+                <td>Title</td>   
+                <td>Publisher</td>
+                <td>Quantity</td>   
+                <td>Price</td>
+                <td>Year Published</td>
+                <td>Format</td>
+                <td>Tags</td>
+              </tr>
+              <tr>
+                <td>kSBN</td>
+                <td>Title</td>   
+                <td>Publisher</td>
+                <td>Quantity</td>   
+                <td>Price</td>
+                <td>Year Published</td>
+                <td>Format</td>
+                <td>Tags</td>
+              </tr>
+              
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-                    <tr>
-                      <td id="ISBN4" name="ISBN4">ISBN</td>
-                      <td id="Title4" name="Title4">Title</td>   
-                      <td id="Publisher4" name="Publisher4">Publisher</td>
-                      <td id="Quantity4" name="Quantity4">Quantity</td>   
-                      <td id="Price4" name="Price4">Price</td>
-                      <td id="Year4" name="Year4">Year Published</td>
-                      <td id="Format4" name="Format4">Format</td>
-                      <td id="Tags4" name="Tags4">Tags</td>
-                    </tr>
-                    <tr>
-                      <td id="ISBN5" name="ISBN5">ISBN</td>
-                      <td id="Title5" name="Title5">Title</td>   
-                      <td id="Publisher5" name="Publisher5">Publisher</td>
-                      <td id="Quantity5" name="Quantity5">Quantity</td>   
-                      <td id="Price5" name="Price5">Price</td>
-                      <td id="Year5" name="Year5">Year Published</td>
-                      <td id="Format5" name="Format5">Format</td>
-                      <td id="Tags5" name="Tags5">Tags</td>
-                    </tr>
+      <hr>
 
-                    <tr>
-                      <td id="ISBN6" name="ISBN6">ISBN</td>
-                      <td id="Title6" name="Title6">Title</td>   
-                      <td id="Publisher6" name="Publisher6">Publisher</td>
-                      <td id="Quantity6" name="Quantity6">Quantity</td>   
-                      <td id="Price6" name="Price6">Price</td>
-                      <td id="Year6" name="Year6">Year Published</td>
-                      <td id="Format6" name="Format6">Format</td>
-                      <td id="Tags6" name="Tags6">Tags</td>
-                    </tr>
+      <!-- Pagination -->
+      <div class="row text-center">
+        <div class="col-lg-12">
+          <ul class="pagination">
+            <li>
+              <a href="#">«</a>
+            </li>
+            <li class="active">
+              <a href="#">1</a>
+            </li>
+            <li>
+              <a href="#">2</a>
+            </li>
+            <li>
+              <a href="#">3</a>
+            </li>
+            <li>
+              <a href="#">4</a>
+            </li>
+            <li>
+              <a href="#">5</a>
+            </li>
+            <li>
+              <a href="#">»</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- /.row -->
 
-                    <tr>
-                      <td id="ISBN7" name="ISBN7">ISBN</td>
-                      <td id="Title7" name="Title7">Title</td>   
-                      <td id="Publisher7" name="Publisher7">Publisher</td>
-                      <td id="Quantity7" name="Quantity7">Quantity</td>   
-                      <td id="Price7" name="Price7">Price</td>
-                      <td id="Year7" name="Year7">Year Published</td>
-                      <td id="Format7" name="Format7">Format</td>
-                      <td id="Tags7" name="Tags7">Tags</td>
-                    </tr>
+      <hr>
 
-                    <tr>
-                      <td id="ISBN8" name="ISBN8">ISBN</td>
-                      <td id="Title8" name="Title8">Title</td>   
-                      <td id="Publisher8" name="Publisher8">Publisher</td>
-                      <td id="Quantity8" name="Quantity8">Quantity</td>   
-                      <td id="Price8" name="Price8">Price</td>
-                      <td id="Year8" name="Year8">Year Published</td>
-                      <td id="Format8" name="Format8">Format</td>
-                      <td id="Tags8" name="Tags8">Tags</td>
-                    </tr>
+      <!-- script references -->
+      <script src="static/js/jquery.js"></script>
+      <script src="static/js/jquery-2.1.4.js"></script>
+      <script src="static/js/bootstrap.min.js"></script>
+      <script src="static/js/scripts.js"></script>
+      <script src="static/js/jquery.dataTables.min.js"></script>
+      <script>
+      $('#example').dataTable( {
+        "columnDefs": [
+        { "width": "20%", "targets": 0 }
+        ]
+      } );
 
-                    <tr>
-                      <td id="ISBN9" name="ISBN9">ISBN</td>
-                      <td id="Title9" name="Title9">Title</td>   
-                      <td id="Publisher9" name="Publisher9">Publisher</td>
-                      <td id="Quantity9" name="Quantity9">Quantity</td>   
-                      <td id="Price9" name="Price9">Price</td>
-                      <td id="Year9" name="Year9">Year Published</td>
-                      <td id="Format9" name="Format9">Format</td>
-                      <td id="Tags9" name="Tags9">Tags</td>
-                    </tr>
-
-                    <tr>
-                      <td id="ISBN10" name="ISBN10">ISBN</td>
-                      <td id="Title10" name="Title10">Title</td>   
-                      <td id="Publisher10" name="Publisher10">Publisher</td>
-                      <td id="Quantity10" name="Quantity10">Quantity</td>   
-                      <td id="Price10" name="Price10">Price</td>
-                      <td id="Year10" name="Year10">Year Published</td>
-                      <td id="Format10" name="Format10">Format</td>
-                      <td id="Tags10" name="Tags10">Tags</td>
-                    </tr>
-
-
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <hr>
-
-            <!-- Pagination -->
-            <div class="row text-center">
-              <div class="col-lg-12">
-                <ul class="pagination">
-                  <li>
-                    <a href="#">«</a>
-                  </li>
-                  <li class="active">
-                    <a href="#">1</a>
-                  </li>
-                  <li>
-                    <a href="#">2</a>
-                  </li>
-                  <li>
-                    <a href="#">3</a>
-                  </li>
-                  <li>
-                    <a href="#">4</a>
-                  </li>
-                  <li>
-                    <a href="#">5</a>
-                  </li>
-                  <li>
-                    <a href="#">»</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <!-- /.row -->
-
-            <hr>
-
-            <!-- script references -->
-            <script src="js/jquery.js"></script>
-            <script src="js/jquery-2.1.4.js"></script>
-            <script src="js/bootstrap.min.js"></script>
-            <script src="js/scripts.js"></script>
-            <script src="js/datatable.js"></script>
-            <script>
-            $('#example').dataTable( {
-              "columnDefs": [
-              { "width": "20%", "targets": 0 }
-              ]
-            } );
-
-            $("add_stock").click(function(){
-              $("form_add_stock").submit();
-            });
-            </script>
-          </body>
-          </html>
+      $("add_stock").click(function(){
+        $("form_add_stock").submit();
+      });
+      </script>
+    </body>
+    </html>
