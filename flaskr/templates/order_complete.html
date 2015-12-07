@@ -10,7 +10,7 @@
     <h4>Order made by : {{session.user.full_name}}</h4>
     <h4>Credit card number : {{session.user.credit_card_no}}</h4>
     <h4>Date : {{date}}</h4>
-    <h4>Total quantity : {{orders|count}}</h4>
+    <h4>Total quantity : {{total_quantity}}</h4>
     <h4>Total price : ${{total_price}}</h4>
     <hr>    
     {% for order in orders%}
@@ -27,7 +27,7 @@
       <h4>Author: {{order.authors}}</h4>
       <h4>Publisher: {{order.publisher}}</h4>
       <h4>Year of publication: {{order.year_of_publication}}</h4>
-      <h4>Quantity: 1</h4>
+      <h4>Quantity: {{order.quantity}}</h4>
       <h4>Price: {{order.price}}</h4>
       <h4>Format: {{order.format|capitalize}}</h4>
       <h4>Subject: {{order.subject|capitalize}}</h4>

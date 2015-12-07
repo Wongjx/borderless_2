@@ -6,8 +6,8 @@ from flask import Flask,request,session,g,redirect,url_for, abort, render_templa
 import datetime, time
 
 #configuration
-DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless_2//flaskr//tmp//flaskr.db'
-# DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
+# DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless//flaskr//tmp//flaskr.db'
+DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
 # DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
 DEBUG = True
 SECRET_KEY = 'development key'
@@ -50,6 +50,12 @@ def db_insert (query, args=()):
     except Exception, e:
         print e
         return False
+def find_authors(isbn):
+    author_list=db_query('select name from Authors where author_id in (select author_id from Writes where isbn==?)',[isbn])
+    authors=""
+    for author in author_list:
+        authors+=author['name']+","
+    return authors[:-1]
 
 @app.before_request
 def before_request():
@@ -66,19 +72,7 @@ def close_connection(exception):
 @app.route('/main', methods=['GET','POST'])
 def main():
     login_name = session['user']['login_name']
-    # if request.method == 'POST':
-    #     order_date=datetime.datetime.now()
-    #     order_date=order_date.strftime("%Y-%m-%d|%H:%M:%S")
-    #     status="processing"
-    #     quantity=1
-    #     for k in request.form:
-    #         if 'isbn' in k:
-    #             isbn=request.form[k]
-    #             g.db.execute('update Books set quantity_left = quantity_left - 1 where isbn=?',[isbn]) #decrement number of book available
-    #             g.db.execute('insert into Order_book (login_name,isbn,order_date,status,quantity) VALUES (?,?,?,?,?)',[login_name,isbn,order_date,status,quantity]) #insert order
-    #             g.db.commit()
-    #             # time.sleep(1)
-    #     return redirect(url_for('order_complete',date=order_date,login_name=login_name)) # redirect to order_complete with date and username
+    
     if request.method == 'GET':
         # login_name=request.args['login_name']
         print login_name
@@ -87,48 +81,35 @@ def main():
         else:
             error = None
             book_list = db_query('select * from Books where quantity_left>0')
-            print book_list
+            for book in book_list:                
+                book['authors']=find_authors(book['isbn'])
             return render_template('main.html',book_list=book_list)
 
-
-### Hidden routes order, opinion and rate_opinion
-@app.route('/order', methods=['GET','POST'])
+@app.route('/order', methods=['POST'])
 def order():
     login_name = session['user']['login_name']
     if request.method == 'POST':
         order_date=datetime.datetime.now()
         order_date=order_date.strftime("%Y-%m-%d|%H:%M:%S")
         status="processing"
-        quantity=1
-        # print "/n"
-        # print "Request.form ===== " +str(request.form)
-        # print "/n"
+        error=None
+
         if len(request.form) <=1:
             return redirect
+
         for k in request.form:
             if 'isbn' in k:
-                isbn=request.form[k]
-                # g.db.execute('update Books set quantity_left = quantity_left - 1 where isbn=?',[isbn]) #decrement number of book available
-                g.db.execute('insert into Order_book (login_name,isbn,order_date,status,quantity) VALUES (?,?,?,?,?)',[login_name,isbn,order_date,status,quantity]) #insert order
-                g.db.commit()
-                # time.sleep(1)
-        return redirect(url_for('order_complete',date=order_date,login_name=login_name)) # redirect to order_complete with date and username
+                isbn=k[5:]                    
+                quantity=int(request.form[k]) # string will not be passed, input type='integer'             
+                if quantity<1:
+                    break
+                else:               
+                    # decrement if quantity ordered > quantity left     
+                    g.db.execute('update Books set quantity_left = quantity_left - 1 where isbn=? and quantity_left>?',[isbn,quantity]) #decrement number of book available
+                    g.db.execute('insert into Order_book (login_name,isbn,order_date,status,quantity) VALUES (?,?,?,?,?)',[login_name,isbn,order_date,status,quantity]) #insert order
+                    g.db.commit()
+        return redirect(url_for('order_complete',date=order_date,login_name=login_name,error=error)) # redirect to order_complete with date and username
 
-# PT
-    # elif request.method == 'GET':
-    #     # login_name=request.args['login_name']
-    #     if session['user']:
-    #         error = None
-    #         book_list = query_db('select * from Books where quantity_left>0')
-    #         for book in book_list:
-    #             author_list=query_db('select name from Authors where author_id in (select author_id from Writes where isbn==?)',[book['isbn']])
-    #             authors=""
-    #             for author in author_list:
-    #                 authors+=author['name']+","
-    #             book['authors']=authors[:-1]
-    #         return render_template('main.html',book_list=book_list, login_name=login_name)
-    #     else:
-    #         return redirect(url_for('login'))
 
     elif request.method == 'GET':
         return render_template('order_complete.html')
@@ -138,75 +119,60 @@ def order_complete(date,login_name):
     # retreive orders from date and login_name
     orders = db_query('Select * from Order_book, Books where login_name = ? and order_date=? and Order_book.isbn==Books.isbn', [login_name,date])
     total_price=0
+    total_quantity=0
     for order in orders:
         total_price+=order["price"] # calculate total price
-    return render_template('order_complete.html',orders=orders,date=date,total_price=total_price)
-# PT
-# @app.route('/book/<login_name>/<isbn>', methods=['GET','POST'])
-# def book(login_name,isbn):
-    
-#     book = query_db('Select * from Books where isbn = ?', [isbn], one=True)
-#     author_list=query_db('select name from Authors where author_id in (select author_id from Writes where isbn==?)',[book['isbn']])
-#     authors=""
-#     for author in author_list:
-#         authors+=author['name']+","
-#     book['authors']=authors[:-1]
-#     exist_comment=query_db('Select * from Rate_book where isbn = ? and login_name = ?', [isbn,login_name], one=True)
-#     opinions=query_db('Select * from Rate_book where isbn = ?', [isbn])
-#     for opinion in opinions:
-#         avg_rating=query_db('select avg(rating) from Rate_opinion where rated_id in (select  login_name from Rate_book where isbn==? and login_name==?)',[opinion['isbn'],opinion['login_name']])
-#         avg_rating=avg_rating[0]['avg(rating)']
-#         if avg_rating<2 and avg_rating>=1:
-#             avg_rating="Useful"
-#         elif avg_rating>=2:
-#             avg_rating="Very Useful"
-#         else:
-#             avg_rating="Useless"
-#         opinion['avg_rating']=avg_rating
-#     if book is None:
-#         error = 'Invalid ISBN'
-#         return redirect(url_for('main'))
-#     if request.method == 'POST':
-#         isbn=request.form['isbn']
-#         if isbn:
-#             order_date=datetime.datetime.now()
-#             order_date=order_date.strftime("%Y-%m-%d|%H:%M:%S")
-#             quantity=1
-#             status="processing"
-#             g.db.execute('update Books set quantity_left = quantity_left - 1 where isbn=?',[isbn]) #decrement number of book available
-#             g.db.execute('insert into Order_book (login_name,isbn,order_date,status,quantity) VALUES (?,?,?,?,?)',[login_name,isbn,order_date,status,quantity]) #insert order
-#             g.db.commit()
-#             redirect(url_for('order_complete',date=order_date,login_name=login_name))
-#         else:
-#             usefulness=request.form['rating']
-@app.route('/opinion', methods=['GET','POST'])
-def opinion():
-    return None
-
-@app.route('/rate_opinion', methods=['GET','POST'])
-def rate_opinion():
-    return None
+        total_quantity+=order["quantity"]
+    return render_template('order_complete.html',orders=orders,date=date,total_price=total_price,total_quantity=total_quantity)
 
 @app.route('/book/<isbn>', methods=['GET','POST'])
 def book(isbn):
-    if request.method == 'GET':
+
+    login_name=session['user']['login_name']
+    if not login_name:
+        redirect(url_for('login'))
+    else:
         book = db_query('Select * from Books where isbn = ?', [isbn], one=True)
-        rate=db_query('Select * from Rate_book where isbn = ? and login_name = ?', [isbn,session['user']['login_name']], one=True)
         if book is None:
             error = 'Invalid ISBN'
             return redirect(url_for('main'))
-        return render_template('individual_book.html',book=book)
+        else:
+            book['authors']=find_authors(book['isbn'])
+            exist_comment=db_query('Select * from Rate_book where isbn = ? and login_name = ?', [isbn,login_name], one=True)
+            # find if comment made by this user exist, dont allow him to comment
+            opinions=db_query('Select * from Rate_book where isbn = ?', [isbn])
+            # opinions on this book
+            avg_score=db_query('Select avg(score) from Rate_book where isbn = ?', [isbn])
+            avg_score=avg_score[0]['avg(score)']
+            avg_score="%.2f" % avg_score
+            # avg_score on this book
+            for opinion in opinions:
+                avg_rating=db_query('select avg(rating) from Rate_opinion where rated_id in (select  login_name from Rate_book where isbn==? and login_name==?)',[opinion['isbn'],opinion['login_name']])
+                avg_rating=avg_rating[0]['avg(rating)']
+                # avg_rating of this opinion
+                if avg_rating<2 and avg_rating>=1:
+                    avg_rating="Useful"
+                elif avg_rating>=2:
+                    avg_rating="Very Useful"
+                else:
+                    avg_rating="Useless"
+                opinion['avg_rating']=avg_rating
+
+        return render_template('individual_book.html',book=book,opinions=opinions,exist_comment=exist_comment,avg_score=avg_score)
 
 @app.route('/search', methods=['GET','POST'])
 def search():
     error = None
     if request.method == 'POST':
         book_name = request.form['book_name']
-        book = db_query('Select * from Books where title like ?', ['%'+book_name+'%'])
-        if book is None:
-            error = 'Invalid ISBN'
+        books = db_query('Select * from Books where title like ?', ['%'+book_name+'%'])
+        if books is None:
+            error = 'We are sorry! Unable to find what you are looking for!'
             return render_template('search_result.html',error=error)
-    return render_template('search_result.html',search=[book])
+        else:
+            for book in books:
+                book['authors']=find_authors(book['isbn'])
+        return render_template('search_result.html',search=books)
 
 @app.route('/profile/<login_name>', methods=['GET'])
 def profile(login_name):
