@@ -13,13 +13,14 @@
       <div class="row">
       <div class="col-md-4">
         <br>
-        <img class="img-responsive" src="static/img/{{s.get('subject')}}.jpg" alt="">
+        <img class="img-responsive" src="static/img/{{s.subject}}.jpg" alt="">
       </div>
       <div class="col-md-8">
         <div class="row">
-        <h1>{{s.get('title')}}</h1>
-        <h3>{{s.get('authors')}}</h3>
-        <p>{{s.get('description')}}</p>
+        <h2><a href='/book/{{s.isbn}}'>Title: {{s.title}}</a></h2>
+        <h4>Authors: {{s.authors}}</h4>
+        <h4>Year of publication: {{s.year_of_publication}}</h4>
+        <h4>Publisher: {{s.publisher}}</h4>
         </div>
       </div>
       </div>

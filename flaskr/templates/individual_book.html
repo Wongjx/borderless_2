@@ -17,7 +17,7 @@
       <div class="col-md-8">
       <div class="row">
       <h1>Title: {{book.title}}</h1>
-      <h4>Author: {{book.authors}}</h4>
+      <h4>Authors: {{book.authors}}</h4>
       <h4>Publisher: {{book.publisher}}</h4>
       <h4>Year of publication: {{book.year_of_publication}}</h4>
           <h4>Quantity: {{book.quantity_left}}</h4>
@@ -27,19 +27,20 @@
       </div>
       {% if opinions %}
       <div class="row">
-        <h2>User Reviews</h2>
+        <h2 style="color:#FF3333">User Reviews</h2>
+        <h3>Average Rating: {{avg_score}}</h3>
         {% for opinion in opinions %}
         <div class="row">
         <div class="col-md-3">
 
 
-        <h1><span class="glyphicon glyphicon-user"></span></h1>
+        <h1><span class="glyphicon glyphicon-user" style="color:#FF3333"></span></h1>
         <p>{{opinion.login_name}}</p>
           
           
         </div>
         <div class="col-md-9">
-          <h2>Rating: {{opinion.score}}</h2>
+          <h3>Rating: {{opinion.score}}</h3>
           <p>{{opinion.comment}}</p>
           <h4>Usefulness: {{opinion.avg_rating}}</h4>
           {% if opinion.login_name!=session.user.login_name%}
@@ -57,10 +58,10 @@
 
       </div>
       {% endif %}
-      {% if exist_comment %}
+      {% if not exist_comment %}
       <div class="row">
         <h1>Rate this book!</h1>
-
+        <form method="post"> 
         <label for="score" style="color:black">Score </label>
         <select class="form-control" style="width:50%">
           <option name="score" value="0">0</option>
@@ -76,9 +77,10 @@
           <option name="score" value="1">10</option>
         </select>
         <hr>
-        <textarea style="width:100%;height:100px"></textarea>
+        <textarea style="width:100%;height:100px" maxlength="100"></textarea>
         <hr>
         <button class="btn btn-default">Submit Rating!</button>
+        </form>
         <br><br>
       </div>
       {% endif %}
@@ -90,18 +92,11 @@
           <div id="sidebar" class="affix-top">
             <ul class="nav nav-stacked">
 
-<!--             <li><h3 class="highlight">Order Now!<i class="glyphicon glyphicon-dashboard pull-right"></i></h3></li>
-            <form method="post">
-            <li><button class="btn btn-primary">Place Order</button></li>
-            <input class="hidden" name="isbn" value="{{book.isbn}}">
-            </form> -->
+                    <form method="POST" action="/order">
                     <li><h3 class="highlight">Order Now!<i class="glyphicon glyphicon-dashboard pull-right"></i></h3></li>
-                    <!-- <form method="post" action="/order">
-                      <input type="text" name="quantity" id="quantity" value="default" readonly = "True">
-                      <input type="range" name="quantity" id="quantity">
-                      <li><div class="btn btn-primary">Place Order</div></li>
-                    </form> -->
                     <button class="btn btn-primary" id="order_button" name="order_button">Place Order</button>
+                    <input class="hidden" name="isbn_{{book.isbn}}" value="1">
+                    </form>
         </ul>
 
                </div>
@@ -124,26 +119,26 @@
     });
 
     // this is the id of the form
-    $("#order_button").click(function(e) {
-        var url = "/order"; // the script where you handle the form input.
-        var data = {"isbn":"{{book.isbn}}"}
+    // $("#order_button").click(function(e) {
+    //     var url = "/order"; // the script where you handle the form input.
+    //     var data = {"isbn_{{book.isbn}}":"1"}
 
-        $.ajax({
-               type: "POST",
-               url: url,
-               data: data,
-               success: function(data)
-               {
-                 document.write(data);
-                 document.close();
-               },
-               error: function(data)
-               {
-                 alert(data)
-               },
-             });
-        // e.preventDefault(); // avoid to execute the actual submit of the form.
-    });
+    //     $.ajax({
+    //            type: "POST",
+    //            url: url,
+    //            data: data,
+    //            success: function(data)
+    //            {
+    //              document.write(data);
+    //              document.close();
+    //            },
+    //            error: function(data)
+    //            {
+    //              alert(data)
+    //            },
+    //          });
+    //     // e.preventDefault(); // avoid to execute the actual submit of the form.
+    // });
 
 
     </script>

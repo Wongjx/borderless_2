@@ -16,9 +16,6 @@
             </div>
         </div>
         <!-- /.row -->
-        <div class="row" align="center">
-            <h4>Total price : <span id="total_price">0</span></h4>
-        </div>
 
         <div class="row" align="center">
             <form method="POST" id="order_multiple" action="/order">
@@ -52,11 +49,11 @@ each_data.push("{{book.quantity_left}}")
 each_data.push("{{book.price}}")
 each_data.push("{{book.format}}")
 each_data.push("{{book.subject}}")
-each_data.push("<input type='checkbox' class='book' name='isbn_"+number.toString()+"' value='"+"{{book.isbn}}'>")
+each_data.push("<input type='integer' class='book' name='isbn_{{book.isbn}}'"+"value='0'>")
 number+=1
 dataSet.push(each_data)
 {% endfor %}
-console.log(dataSet)
+
 $('#myTable').DataTable({
         data: dataSet,
         columns: [
@@ -72,17 +69,6 @@ $('#myTable').DataTable({
             { title: "Order Now!"}
         ]
     });
-var init_price=0
-$(".book").click(function(e){
-    test=$(this)
-    var price = $(this).parent().siblings()[4].innerHTML
-    if($(this).is(":checked")){
-        init_price+=parseFloat(price)
-    }else{
-        init_price-=parseFloat(price)
-    };
-    console.log("Add")
-});
 
 
 </script>

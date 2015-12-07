@@ -21,6 +21,7 @@
 		<script src="/static/js/scripts.js"></script>
     {% endblock %}
 </head>
+
 <body>
 <nav class="navbar navbar-static">
     <div class="container">
@@ -28,7 +29,7 @@
         <span class="glyphicon glyphicon-chevron-down"></span>
       </a>
       <div class="nav-collapse collase">
-        <h1 style="color:white">BORDERLESS</h1>
+        <h1 style="color:white" id="main">BORDERLESS</h1>
         <a class= "header_title", href="{{url_for('main')}}">HOME</a>
 <!--         <ul class="nav navbar-nav">
           <li><a href="#">Home</a></li>
@@ -78,7 +79,15 @@
         </ul>
       </div>
     </div>
-</nav><!-- /.navbar -->
+</nav>
+<script type="text/javascript">
+$("#main").click(function(){
+  console.log("click")
+  window.location.replace("{{url_for('main')}}")
+});
+
+</script>
+<!-- /.navbar -->
 {% with messages = get_flashed_messages() %}
   {% if messages %}
     <ul class=flashes>

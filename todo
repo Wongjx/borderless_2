@@ -19,7 +19,6 @@ Admin page:
 
 Individual Book:
 - Feedback Record => 1-10 scoring and comment
-- Rating on feedbacks
 - user can only make 1 comment on a book
 - user cannot rate their own feedback
 - user could ask for the top n most ‘useful’ feedbacks
