@@ -281,10 +281,11 @@ def admin_newbook():
 
 @app.route('/admin/inventory', methods=['GET','POST'])
 def admin_invent():
-    return render_template('admin.html', error = 'Admin Inventory: Work in progress')
+    return render_template('admin inventory.html')#, error = 'Admin Inventory: Work in progress')
 
 @app.route('/admin/statistics', methods=['GET','POST'])
 def admin_stats():
+    
     return render_template('admin.html', error = 'Admin Statistics: Work in progress')
 
 
