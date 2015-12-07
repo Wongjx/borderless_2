@@ -6,8 +6,8 @@ from flask import Flask,request,session,g,redirect,url_for, abort, render_templa
 import datetime, time
 
 #configuration
-# DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless//flaskr//tmp//flaskr.db'
-DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
+DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless_2//flaskr//tmp//flaskr.db'
+# DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
 # DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
 DEBUG = True
 SECRET_KEY = 'development key'
@@ -252,14 +252,15 @@ def logout():
 #### Admin Routes/Pages
 @app.route('/admin', methods=['GET','POST'])
 def admin():
-    # if request.method == 'GET':
-    #
-    # elif request.method == 'POST':
-    return render_template('admin.html')
+    if request.method == 'POST':
+        return render_template('admin.html')
+    else:
+        return render_template('admin.html')
 
 @app.route('/admin/newbook', methods=['GET','POST'])
 def admin_newbook():
     if request.method == 'POST':
+        print "HELLO????"
         isbn = request.form['isbn']
         title = request.form['title']
         subject = request.form['subject']
@@ -269,13 +270,14 @@ def admin_newbook():
         format = request.form['format']
         quantity = request.form['quantity']
         try:
-            db_insert('insert into Books (isbn,title,publisher,year_of_publication,quantity_left,price,format,subject) VALUES (?,?,?,?,?,?,?,?,?)',[isbn,title,publisher,year_published,quantity,price,format,subject])
+            db_insert('insert into Books (isbn,title,publisher,year_of_publication,quantity_left,price,format,subject) VALUES (?,?,?,?,?,?,?,?)',[isbn,title,publisher,year_published,quantity,price,format,subject])
             flash('Book successfully added')
+            return render_template('admin.html')
         except Exception as e:
             render_template(admin_newbook, error = str(e))
     elif request.method == 'GET':
         return render_template('admin_newbook.html')
-    return render_template('admin.html')
+    # return render_template('admin.html')
 
 @app.route('/admin/inventory', methods=['GET','POST'])
 def admin_invent():
