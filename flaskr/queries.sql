@@ -1,3 +1,11 @@
+/*insert Rate_book values*/
+insert into Rate_book values (NULL,'978-0136079675', 'fengmeng1990',8,NULL,'2001-05-02'); /*(rb_id, isbn, login_name, score, comment, date)*/
+
+
+/*insert Rate_opinion values*/
+insert into Rate_opinion values (NULL,'zhouhuichan1990', 'zhengzhemin1991','978-0470523988',2); /*(ro_id, rater_id, rated_id, isbn, rating) */
+
+
 /*3*/
 /*Account info*/
 select * from Customers
@@ -22,8 +30,4 @@ where RO.isbn = B.isbn
 and RO.rated_id = C.login_name
 and RO.rater_id = 'xiexin2011'; /*insert login_name*/;
 
-/*insert Rate_book values*/
-insert into Rate_book values (NULL,'978-0136079675', 'fengmeng1990',8,NULL,'2001-05-02');
 
-/*insert Rate_opinion values*/
-insert into Rate_opinion values (NULL,'zhouhuichan1990', 'zhengzhemin1991','978-0470523988',2);
