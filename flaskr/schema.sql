@@ -1,6 +1,5 @@
 drop table if exists Books;
-drop table if exists Authors;
-drop table if exists Writes;
+drop table if exists Authors_write;
 drop table if exists Customers;
 drop table if exists Rate_book;
 drop table if exists Rate_opinion;
@@ -8,7 +7,6 @@ drop table if exists Order_book;
 
 create table Books (isbn char(14) primary key,
                     title varchar(128) not null,
-                    authors varchar(256),
                     publisher varchar(64),
                     year_of_publication integer,
                     quantity_left integer,
@@ -17,8 +15,11 @@ create table Books (isbn char(14) primary key,
                     keywords varchar(32),
                     subject varchar(32));
 
-create table Authors (author_id integer primary key,
-                      name varchar(128));
+create table Authors_write (aw_id integer primary key autoincrement,
+                            name varchar(128),
+                            isbn char(14),
+                            unique (name, isbn),
+                            foreign key (isbn) references Books);
 
 create table Customers (login_name varchar(32) primary key,
                         full_name varchar(128) not null,
@@ -26,12 +27,6 @@ create table Customers (login_name varchar(32) primary key,
                         credit_card_no varchar(16),
                         address varchar(256),
                         phone_no char(8));
-
-create table Writes (author_id integer,
-                    isbn char(14),
-                    primary key (author_id, isbn),
-                    foreign key (author_id) references Authors,
-                    foreign key (isbn) references Books);
 
 create table Order_book (order_id integer primary key autoincrement,
                          login_name varchar(32),
@@ -62,5 +57,3 @@ create table Rate_opinion (ro_id integer primary key autoincrement,
                            foreign key (rated_id) references Rate_book(login_name),
                            foreign key (isbn) references Rate_book,
                            check (rated_id <> rater_id));
-
-Insert into Books values ('978-1449389673', 'Photoshop Elements 9: The Missing Manual','Barbara Brundage', 'Pogue Press',1992,5,20,'hardcover','keywords none', 'Computer');
