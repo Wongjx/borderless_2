@@ -85,7 +85,7 @@ def main():
                 book['authors']=find_authors(book['isbn'])
             return render_template('main.html',book_list=book_list)
 
-@app.route('/order', methods=['POST'])
+@app.route('/order', methods=['GET','POST'])
 def order():
     login_name = session['user']['login_name']
     if request.method == 'POST':
@@ -114,16 +114,9 @@ def order():
     elif request.method == 'GET':
         return render_template('order_complete.html')
 
-@app.route('/order_complete/<date>/<login_name>', methods=['GET','POST'])
-def order_complete(date,login_name):
-    # retreive orders from date and login_name
-    orders = db_query('Select * from Order_book, Books where login_name = ? and order_date=? and Order_book.isbn==Books.isbn', [login_name,date])
-    total_price=0
-    total_quantity=0
-    for order in orders:
-        total_price+=order["price"] # calculate total price
-        total_quantity+=order["quantity"]
-    return render_template('order_complete.html',orders=orders,date=date,total_price=total_price,total_quantity=total_quantity)
+@app.route('/order_complete/<date>/<username>', methods=['GET','POST'])
+def order_complete():
+    return render_template('order_complete.html')
 
 @app.route('/book/<isbn>', methods=['GET','POST'])
 def book(isbn):
