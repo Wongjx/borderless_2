@@ -4,6 +4,7 @@ import sqlite3
 from contextlib import closing
 from flask import Flask,request,session,g,redirect,url_for, abort, render_template,flash
 import datetime, time
+import re
 
 #configuration
 DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless_2//flaskr//tmp//flaskr.db'
@@ -49,7 +50,7 @@ def db_insert (query, args=()):
         return True
     except Exception, e:
         print e
-        return False
+        return e
 def find_authors(isbn):
     author_list=db_query('select name from Authors where author_id in (select author_id from Writes where isbn==?)',[isbn])
     authors=""
@@ -205,7 +206,9 @@ def signup():
             ## New user sign up
             # g.db.execute('insert into Customers (login_name,full_name,password,credit_card_no,address,phone_no) VALUES (?,?,?,?,?,?)',[username,name,password,ccn,address,phone])
             # g.db.commit()
-            db_insert('insert into Customers (login_name,full_name,password,credit_card_no,address,phone_no) VALUES (?,?,?,?,?,?)',[username,name,password,ccn,address,phone])
+            e = db_insert('insert into Customers (login_name,full_name,password,credit_card_no,address,phone_no) VALUES (?,?,?,?,?,?)',[username,name,password,ccn,address,phone])
+            if e!=True:
+                return render_template('signup.html',error=str(e))
             flash('Sign up successful')
             return redirect(url_for('login'))
         else:
@@ -221,8 +224,8 @@ def login():
         #Username not correct
         the_username = request.form['username']
         password = request.form['password']
-        if the_username == "admin":
-            if password == "password":
+        if the_username == USERNAME:
+            if password == PASSWORD:
                 return redirect(url_for('admin'))
                 # return render_template('admin inventory.html')
             else:
@@ -260,24 +263,27 @@ def admin():
 @app.route('/admin/newbook', methods=['GET','POST'])
 def admin_newbook():
     if request.method == 'POST':
-        print "HELLO????"
         isbn = request.form['isbn']
         title = request.form['title']
+        authors = request.form['authors']
+        authors.replace(" ","")
+        authorlist = re.split(';',authors)
         subject = request.form['subject']
         publisher = request.form['publisher']
         price = request.form['price']
         year_published = request.form['year_published']
         format = request.form['format']
         quantity = request.form['quantity']
-        try:
-            db_insert('insert into Books (isbn,title,publisher,year_of_publication,quantity_left,price,format,subject) VALUES (?,?,?,?,?,?,?,?)',[isbn,title,publisher,year_published,quantity,price,format,subject])
-            flash('Book successfully added')
-            return render_template('admin.html')
-        except Exception as e:
-            render_template(admin_newbook, error = str(e))
+        e = db_insert('insert into Books (isbn,title,publisher,year_of_publication,quantity_left,price,format,subject) VALUES (?,?,?,?,?,?,?,?)',[isbn,title,publisher,year_published,quantity,price,format,subject])
+        if e!= True:
+            return render_template('admin_newbook.html', error = str(e))
+        # for author in authorlist:
+        #     db_insert()
+        flash('Book successfully added')
+        return render_template('admin.html')
+
     elif request.method == 'GET':
         return render_template('admin_newbook.html')
-    # return render_template('admin.html')
 
 @app.route('/admin/inventory', methods=['GET','POST'])
 def admin_invent():
@@ -285,7 +291,6 @@ def admin_invent():
 
 @app.route('/admin/statistics', methods=['GET','POST'])
 def admin_stats():
-    
     return render_template('admin.html', error = 'Admin Statistics: Work in progress')
 
 
