@@ -1,0 +1,49 @@
+
+### Home Page/ user reaches this home page upon login
+@app.route('/main/<login_name>', methods=['GET','POST'])
+Done =
+
+### User Profile Page/ user information (without password)
+@app.route('/user/<login_name>', methods=['GET','POST'])
+Done =
+
+### hidden route: insert order to database; Order route/ to make an order
+@app.route('/order', methods=['GET','POST'])
+Done =
+
+### Order Complete Page/ show completion of transaction and recommended books based on transaction
+@app.route('/order_complete/<date>/<username>', methods=['GET','POST'])
+Done =
+
+### Individual Book View Page/ see details of book
+@app.route('/book/<login_name>/<isbn>', methods=['GET'])
+Done =
+
+### hidden route: insert commment on book to database; Opinion route
+@app.route('/opinion', methods=['POST'])
+
+### hidden route: insert comment on opinion to database; Rating route
+@app.route('/rate_opinion', methods=['POST'])
+
+### Search Results Page
+@app.route('/search', methods=['GET','POST'])
+Done =
+
+### Sign Up Page
+@app.route('/signup', methods=['GET', 'POST'])
+Done =
+
+### Login Page
+@app.route('/login', methods=['GET', 'POST'])
+Done =
+
+### Logout, return to main page.
+@app.route('/logout')
+Done = True
+
+###### ADMIN PAGES
+### Inventory Page/ to edit books (esp to increase stock of books)
+
+### New Book Page/ to insert book into db
+
+### Transaction Page/ to toggle order completion

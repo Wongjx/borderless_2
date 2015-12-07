@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$USER_HOME$/PycharmProjects/borderless/.idea/borderless.iml" filepath="$USER_HOME$/PycharmProjects/borderless/.idea/borderless.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../borderless/.idea/borderless_2.iml" filepath="$PROJECT_DIR$/../borderless/.idea/borderless_2.iml" />
     </modules>
   </component>
 </project>

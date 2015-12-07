@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     {% block head %}
@@ -19,7 +20,7 @@
 </head>
 <body>
 <div class="container" style="text-align:center">
-<h1 class="red">Welcome to BORDERLESS</h1>
+<h1 class="red">Welcome Administrator</h1>
 </div>
 <div class="container" style="text-align:center">
 <div class="row">
@@ -34,29 +35,14 @@
         </ul>
       {% endif %}
     {% endwith %}
-    <form method="post">
-    <fieldset>
-      <legend>Log In</legend>
-      <div class="form-group">
-        <label for="username" class="col-lg-2 control-label">Username</label>
-
-          <input type="text" class="form-control" name="username" id="username" placeholder="Username">
-
-      </div>
-      <div class="form-group">
-        <label for="password" class="col-lg-2 control-label">Password</label>
-
-          <input type="password" class="form-control" name="password" id="password" placeholder="Password">
-
-      </div>
-
-      <div class="form-group">
-          <button type="submit" class="btn btn-primary">Log In</button>
-      </div>
-    </fieldset>
-    </form>
-    <legend>Not a customer?</legend>
-    <a href="{{url_for('signup')}}" class="btn btn-primary">Sign Up</a>
-</div></div></div>
+      <br><br>
+      <a href="{{url_for('admin_newbook')}}" class="btn btn-primary">New Book</a>
+      <br><br><br>
+      <a href="{{url_for('admin_invent')}}" class="btn btn-primary">Inventory</a>
+      <br><br><br>
+      <a href="{{url_for('admin_stats')}}" class="btn btn-primary">Statistics</a>
+</div>
+  </div>
+</div></div>
 </body>
 </html>

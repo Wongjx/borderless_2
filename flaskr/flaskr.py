@@ -6,8 +6,8 @@ from flask import Flask,request,session,g,redirect,url_for, abort, render_templa
 import datetime, time
 
 #configuration
-# DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless//flaskr//tmp//flaskr.db'
-DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
+DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless_2//flaskr//tmp//flaskr.db'
+# DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
 # DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
 DEBUG = True
 SECRET_KEY = 'development key'
@@ -90,7 +90,9 @@ def main():
             print book_list
             return render_template('main.html',book_list=book_list)
 
-@app.route('/order', methods=['POST'])
+
+### Hidden routes order, opinion and rate_opinion
+@app.route('/order', methods=['GET','POST'])
 def order():
     login_name = session['user']['login_name']
     if request.method == 'POST':
@@ -177,18 +179,23 @@ def order_complete(date,login_name):
 #             redirect(url_for('order_complete',date=order_date,login_name=login_name))
 #         else:
 #             usefulness=request.form['rating']
+@app.route('/opinion', methods=['GET','POST'])
+def opinion():
+    return None
 
-#     return render_template('individual_book.html',book=book,opinions=opinions,exist_comment=exist_comment)
+@app.route('/rate_opinion', methods=['GET','POST'])
+def rate_opinion():
+    return None
 
 @app.route('/book/<isbn>', methods=['GET','POST'])
 def book(isbn):
     if request.method == 'GET':
-            book = db_query('Select * from Books where isbn = ?', [isbn], one=True)
-            rate=db_query('Select * from Rate_book where isbn = ? and login_name = ?', [isbn,session['user']['login_name']], one=True)
-            if book is None:
-                error = 'Invalid ISBN'
-                return redirect(url_for('main'))
-            return render_template('individual_book.html',book=book)
+        book = db_query('Select * from Books where isbn = ?', [isbn], one=True)
+        rate=db_query('Select * from Rate_book where isbn = ? and login_name = ?', [isbn,session['user']['login_name']], one=True)
+        if book is None:
+            error = 'Invalid ISBN'
+            return redirect(url_for('main'))
+        return render_template('individual_book.html',book=book)
 
 @app.route('/search', methods=['GET','POST'])
 def search():
@@ -242,6 +249,13 @@ def login():
         #Username not correct
         the_username = request.form['username']
         password = request.form['password']
+        if the_username == "admin":
+            if password == "password":
+                return redirect(url_for('admin'))
+                # return render_template('admin inventory.html')
+            else:
+                return render_template('login.html',error= 'Invalid password')
+        # user = query_db('select * from Customers where login_name = ?', [the_username], one=True)
         user = db_query('select * from Customers where login_name = ?', [the_username], one=True)
         if user is None:
             error = 'Invalid Username'
@@ -262,6 +276,43 @@ def logout():
     session.pop('user', None)
     flash('You were logged out')
     return redirect(url_for('login'))
+
+#### Admin Routes/Pages
+@app.route('/admin', methods=['GET','POST'])
+def admin():
+    # if request.method == 'GET':
+    #
+    # elif request.method == 'POST':
+    return render_template('admin.html')
+
+@app.route('/admin/newbook', methods=['GET','POST'])
+def admin_newbook():
+    if request.method == 'POST':
+        isbn = request.form['isbn']
+        title = request.form['title']
+        subject = request.form['subject']
+        publisher = request.form['publisher']
+        price = request.form['price']
+        year_published = request.form['year_published']
+        format = request.form['format']
+        quantity = request.form['quantity']
+        try:
+            db_insert('insert into Books (isbn,title,publisher,year_of_publication,quantity_left,price,format,subject) VALUES (?,?,?,?,?,?,?,?,?)',[isbn,title,publisher,year_published,quantity,price,format,subject])
+            flash('Book successfully added')
+        except Exception as e:
+            render_template(admin_newbook, error = str(e))
+    elif request.method == 'GET':
+        return render_template('admin_newbook.html')
+    return render_template('admin.html')
+
+@app.route('/admin/inventory', methods=['GET','POST'])
+def admin_invent():
+    return render_template('admin.html', error = 'Admin Inventory: Work in progress')
+
+@app.route('/admin/statistics', methods=['GET','POST'])
+def admin_stats():
+    return render_template('admin.html', error = 'Admin Statistics: Work in progress')
+
 
 if __name__ == '__main__':
     app.run()
