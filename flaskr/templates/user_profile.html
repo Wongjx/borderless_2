@@ -11,7 +11,7 @@
         </div>
         <div style="width=100%;">
           <div d="userpic">
-            <img  style="float:50%;" src="https://placehold.it/200x150">
+            <h1><span class="glyphicon glyphicon-user" style="color:#FF3333"></span></h1>
           </div>
         </div>
       </div>
@@ -99,47 +99,89 @@
                 <input id="fullname-entry" style="display:none;" />
               </span>
             </div>
-
+          
           </div>
+          <h1>Past Orders</h1>
+          <table id="orderTable" class="display" width="100%"></table>
 
 
+          <h1>Past Feedback</h1>
+          <table id="opinionTable" class="display" width="100%"></table>
 
-          <div class="row" style="margin:10px 0px 0px 0px;">
-            <table style="width:80%">
-              <tr>
-                <th> Order Id</th>
-                <th> Book Name </th>
-                <th> Quantity </th>
-                <tr>
-              </tr>
 
-              {%for o in orders%}
+          <h1>Past Feedback Rating</h1>
+          <table id="ratingTable" class="display" width="100%"></table>
 
-              <tr>
-                <td id="order_{{o.order_id}}" name="order_history_{{o.order_id}}">{{o.order_id}}
-                </td>
-                <td id="order_isbn" name="order_isbn">
-                  {{o.isbn}}
-                </td>
-                <td id="order_quantity" name="order_quantity">
-                  {{o.quantity}}
-                </td>
-              </tr>
-
-              {%endfor%}
-
-            </table>
-          </div>
 
 
 
         </div>
       </div>
         <!-- script references -->
-        <script type="text/javascript">
+    <script type="text/javascript">
         $('#advance_search').click(function(){
           $('#advance_search_box').toggle("slow")
         });
-        </script>
+
+
+    var orderSet=[]
+    {% for o in orders %}
+    var each_data=[]
+    each_data.push("{{o.order_id}}")
+    each_data.push("{{o.order_date}}")
+    each_data.push("{{o.status}}")
+    each_data.push("{{o.quantity}}")
+    orderSet.push(each_data)
+    {% endfor %}
+
+    $('#orderTable').DataTable({
+            data: orderSet,
+            columns: [
+                { title: "Order Id" },
+                { title: "Order Date" },
+                { title: "Status" },
+                { title: "Quantity" },
+
+            ]
+        });
+
+    var opinionSet=[]
+    {% for o in opinions %}
+    var each_data=[]
+    each_data.push("{{o.isbn}}")
+    each_data.push("{{o.score}}")
+    each_data.push("{{o.comment}}")
+    each_data.push("{{o.date}}")
+    opinionSet.push(each_data)
+    {% endfor %}
+
+    $('#opinionTable').DataTable({
+            data: opinionSet,
+            columns: [
+                { title: "ISBN" },
+                { title: "Score" },
+                { title: "Comment" },
+                { title: "Date" },
+            ]
+        });
+
+    var ratingSet=[]
+    {% for r in ratings %}
+    var each_data=[]
+    each_data.push("{{r.isbn}}")
+    each_data.push("{{r.rated_id}}")
+    each_data.push("{{r.rating}}")
+    opinionSet.push(each_data)
+    {% endfor %}
+
+    $('#ratingTable').DataTable({
+            data: ratingSet,
+            columns: [
+                { title: "ISBN" },
+                { title: "Opinion Owner" },
+                { title: "Rating" },
+            ]
+        });
+            </script>
 
     {%endblock%}

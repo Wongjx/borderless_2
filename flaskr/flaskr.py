@@ -160,10 +160,12 @@ def book(isbn):
             action=request.form['action']
             if action=='find_reviews':
                 n=request.form['n']
+                opinions=db_query('select * from Rate_opinion where isbn==? order by rating desc',[book['isbn']])
+                opinions=opinions[:int(n)]                
                 #sql for find top n reviews
             elif action=='rate_review':
                 rating=request.form['rating']
-                opinion_id=request.form['opinion_id']
+                opinion_id=request.form['opinion_id']                
                 #sql to rate opinion
             elif action=='rate_book':
                 score=request.form['score']
@@ -177,6 +179,7 @@ def book(isbn):
 def search():
     error = None
     if request.method == 'POST':
+        print request.form
         book_name = request.form['book_name']
         books = db_query('Select * from Books where title like ?', ['%'+book_name+'%'])
         if books is None:
@@ -192,7 +195,9 @@ def profile(login_name):
     # retreive orders from date and login_name
     user = db_query('Select * from Customers where login_name = ? ', [login_name], one=True)
     orders = db_query('Select * from Order_book where login_name = ?', [login_name])
-    return render_template('user_profile.html',user=user, orders = orders)
+    opinions = db_query('Select * from Rate_book where login_name = ?',[login_name])
+    ratings = db_query('Select * from Rate_opinion where rater_id = ?',[login_name])
+    return render_template('user_profile.html',user=user, orders = orders,opinions=opinions,ratings=ratings)
 
 
 @app.route('/signup', methods=['GET', 'POST'])
