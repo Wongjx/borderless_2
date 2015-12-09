@@ -1,9 +1,9 @@
-drop table if exists Books;
-drop table if exists Authors_write;
-drop table if exists Customers;
-drop table if exists Rate_book;
-drop table if exists Rate_opinion;
 drop table if exists Order_book;
+drop table if exists Rate_opinion;
+drop table if exists Rate_book;
+drop table if exists Authors_write;
+drop table if exists Books;
+drop table if exists Customers;
 
 create table Books (isbn char(14) primary key,
                     title varchar(128) not null,
@@ -43,6 +43,7 @@ create table Rate_book (rb_id integer primary key autoincrement,
                         score integer check (score <= 10 and score >= 0),
                         comment varchar(2048),
                         date date,
+                        unique (isbn, login_name),
                         foreign key (isbn) references Books,
                         foreign key (login_name) references Customers);
 
