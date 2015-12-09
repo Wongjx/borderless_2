@@ -9,7 +9,7 @@
     <br>
     <div class="row">
 
-    {%for s in search%}
+    {%for s in books%}
       <div class="row">
       <div class="col-md-4">
         <br>
@@ -26,6 +26,8 @@
       </div>
 
         {%endfor%}
+
+    {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
 
     </div>
   </div>

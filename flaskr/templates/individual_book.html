@@ -27,7 +27,7 @@
       </div>
       {% if opinions %}
       <div class="row">
-        <h2 style="color:#FF3333">User Reviews</h2> 
+        <h2 style="color:#FF3333">User Reviews</h2>
         <form method="post">
         <input type="integer" placeholder="1-{{opinions|count}}" name="n">
         <button class="btn btn-default" id="most_useful">most useful review</button>
@@ -41,8 +41,8 @@
 
         <h1><span class="glyphicon glyphicon-user" style="color:#FF3333"></span></h1>
         <p>{{opinion.login_name}}</p>
-          
-          
+
+
         </div>
         <div class="col-md-9">
           <h3>Rating: {{opinion.score}}</h3>
@@ -68,7 +68,7 @@
       {% if not exist_comment %}
       <div class="row">
         <h1>Rate this book!</h1>
-        <form method="post"> 
+        <form method="post">
         <label for="score" style="color:black">Score </label>
         <select class="form-control" style="width:50%">
           <option name="score" value="0">0</option>
@@ -103,7 +103,7 @@
                     <form method="POST" action="/order">
                     <li><h3 class="highlight">Order Now!<i class="glyphicon glyphicon-dashboard pull-right"></i></h3></li>
                     <button class="btn btn-primary" id="order_button" name="order_button">Place Order</button>
-                    <input class="hidden" name="isbn_{{book.isbn}}" value="1">
+                    <input class="hidden" name="isbn_{{book.isbn}}_in" value="1">
                     </form>
         </ul>
 

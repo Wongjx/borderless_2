@@ -102,8 +102,6 @@
 
           </div>
 
-
-
           <div class="row" style="margin:10px 0px 0px 0px;">
             <table style="width:80%">
               <tr>
@@ -114,7 +112,6 @@
               </tr>
 
               {%for o in orders%}
-
               <tr>
                 <td id="order_{{o.order_id}}" name="order_history_{{o.order_id}}">{{o.order_id}}
                 </td>
@@ -125,9 +122,83 @@
                   {{o.quantity}}
                 </td>
               </tr>
+              {%endfor%}
+            </table>
+          </div>
+
+          <div class="row" style="margin:10px 0px 0px 0px;">
+            <table style="width:80%">
+              <tr>
+                <th> Book Name</th>
+                <th> Comment </th>
+                <th> Rating </th>
+                <tr>
+              </tr>
+
+              {% if book_ratings[1] == 0 %}
+              <tr>
+                <td id="rating_book_name" name="rating_book_name">None
+                </td>
+                <td id="rating_comment" name="rating_comment">
+                  None
+                </td>
+                <td id="rating_score" name="rating_score">
+                  None
+                </td>
+              </tr>
+              {% endif %}
+              {%for b in book_ratings[0] %}
+
+              <tr>
+                <td id="rating_book_name" name="rating_book_name">{{b.isbn}}
+                </td>
+                <td id="rating_comment" name="rating_comment">
+                  {{b.comment}}
+                </td>
+                <td id="rating_score" name="rating_score">
+                  {{b.score}}
+                </td>
+              </tr>
 
               {%endfor%}
+            </table>
+          </div>
 
+          <div class="row" style="margin:10px 0px 0px 0px;">
+            <table style="width:80%">
+              <tr>
+                <th> Isbn</th>
+                <th> Comment Writer </th>
+                <th> Rating </th>
+                <tr>
+              </tr>
+
+              {% if comment_ratings[1] == 0 %}
+              <tr>
+                <td id="comment_isbn" name="comment_isbn">None
+                </td>
+                <td id="comment_writer_id" name="comment_writer_id">
+                  None
+                </td>
+                <td id="comment_score" name="comment_score">
+                  None
+                </td>
+              </tr>
+              {% endif %}
+              {%for c in comment_ratings[0] %}
+
+              <tr>
+                <td id="comment_isbn" name="comment_isbn">{{c.isbn}}
+                </td>
+                <td id="comment_writer_id" name="comment_writer_id">
+                  {{c.rated_id}}
+                </td>
+                <td id="comment_score" name="comment_score">
+                  {{c.rating}}
+                </td>
+              </tr>
+
+              {%endfor%}
             </table>
           </div>
 

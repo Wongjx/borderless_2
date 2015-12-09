@@ -12,7 +12,7 @@
     <h4>Date : {{date}}</h4>
     <h4>Total quantity : {{total_quantity}}</h4>
     <h4>Total price : ${{total_price}}</h4>
-    <hr>    
+    <hr>
     {% for order in orders%}
     <div class="row">
 
@@ -31,7 +31,8 @@
       <h4>Price: {{order.price}}</h4>
       <h4>Format: {{order.format|capitalize}}</h4>
       <h4>Subject: {{order.subject|capitalize}}</h4>
-      
+      <h4>Order id: {{order.order_id}}</h4>
+
       </div>
 
       </div>

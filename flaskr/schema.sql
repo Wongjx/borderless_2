@@ -43,7 +43,6 @@ create table Rate_book (rb_id integer primary key autoincrement,
                         score integer check (score <= 10 and score >= 0),
                         comment varchar(2048),
                         date date,
-                        unique (isbn, login_name),
                         foreign key (isbn) references Books,
                         foreign key (login_name) references Customers);
 
