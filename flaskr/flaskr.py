@@ -36,6 +36,9 @@ def get_db():
     db.row_factory = make_dicts
     return db
 
+def search_query_wrapper(query,parameter):
+    return "{0} and {1} like ?".format(query, parameter)
+
 def db_query(query, args=(), one=False):
     cur = get_db().execute(query, args)
     rv = cur.fetchall()
@@ -175,11 +178,29 @@ def book(isbn):
 def search():
     error = None
     if request.method == 'POST':
+        query = "select * from Books where title like ?"
         book_name = request.form['book_name']
-        books = db_query('Select * from Books where title like ?', ['%'+book_name+'%'])
-        print ""
-        print books
-        print ""
+        params=['%'+book_name+'%']
+        # Check if advanced search
+        if request.form.has_key("advance_search"):
+                #Check author
+                if request.form['author'] != "":
+                    author =  request.form['author']
+                    
+                #Check publisher
+                if request.form['publisher'] != "":
+                    publisher =  request.form['publisher']
+                    query = search_query_wrapper(query,"publisher")
+                    params.append('%'+publisher+'%')
+                #Check Genre
+                if request.form['subject'] != "None":
+                    subject = request.form['subject']
+                    query = search_query_wrapper(query,"subject")
+                    params.append('%'+subject+'%')
+        ""
+        print query
+        ""
+        books = db_query( query, params)
         if len(books)<1:
             error = 'We are sorry! Unable to find what you are looking for!'
             return render_template('search_result.html',error=error)
@@ -187,6 +208,8 @@ def search():
             for book in books:
                 book['authors']=find_authors(book['isbn'])
         return render_template('search_result.html',books=books)
+
+
 
 @app.route('/profile/<login_name>', methods=['GET'])
 def profile(login_name):
