@@ -118,6 +118,15 @@ limit 4 /*insert n. Note: limit n only applies when n < count(*) */
 
 
 /*10 Book Recommendation*/
+select OB2.isbn, B.title ,sum(OB1.quantity) as sales_count
+from Order_book OB1, Order_book OB2, Books B
+where OB1.login_name = OB2.login_name
+and OB2.isbn = B.isbn
+and OB1.isbn = '978-0321474049' /*insert isbn*/
+and OB1.isbn <> OB2.isbn
+group by OB2.isbn
+order by  sales_count desc
+;
 
 
 /*11 Monthly Stats*/
