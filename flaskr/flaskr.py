@@ -2,7 +2,7 @@
 
 import sqlite3
 from contextlib import closing
-from flask import Flask,request,session,g,redirect,url_for, abort, render_template,flash
+from flask import Flask,request,session,g,redirect,url_for, abort, render_template,flash,make_response
 import datetime, time
 import re
 
@@ -56,6 +56,7 @@ def db_insert (query, args=()):
     except Exception, e:
         print e
         return e
+
 def find_authors(isbn):
     author_list=db_query('select name from Authors_write where isbn==?',[isbn])
     authors=""
@@ -75,10 +76,9 @@ def close_connection(exception):
 
 
 ## ROUTES
-@app.route('/main', methods=['GET','POST'])
+@app.route('/main', methods=['GET'])
 def main():
     login_name = session['user']['login_name']
-
     if request.method == 'GET':
         # login_name=request.args['login_name']
         print login_name
@@ -94,17 +94,15 @@ def main():
 @app.route('/order', methods=['POST'])
 def order():
     login_name = session['user']['login_name']
+    request_path = request.headers['Referer']
     if request.method == 'POST':
         order_date=datetime.datetime.now()
         order_date=order_date.strftime("%Y-%m-%d|%H:%M:%S")
         status="processing"
         error=None
 
-        # if len(request.form) <=1: #if nothing ordered
-        #     return redirect
-
+        count=0
         for k in request.form:
-            print k
             if 'isbn' in k:
                 isbn=k[5:-3]
                 quantity=int(request.form[k]) # string will not be passed, input type='integer'
@@ -112,9 +110,13 @@ def order():
                     continue
                 else:
                     # decrement if quantity ordered > quantity left
+                    count+=quantity
                     g.db.execute('update Books set quantity_left = quantity_left - 1 where isbn=? and quantity_left>?',[isbn,quantity]) #decrement number of book available
                     g.db.execute('insert into Order_book (login_name,isbn,order_date,status,quantity) VALUES (?,?,?,?,?)',[login_name,isbn,order_date,status,quantity]) #insert order
                     g.db.commit()
+        if count <1: #Nothing ordered
+            error="Invalid quantity. Please order more than 1 book."
+            return redirect(request_path)
         return redirect(url_for('order_complete',date=order_date,login_name=login_name,error=error)) # redirect to order_complete with date and username
 
 
@@ -127,6 +129,18 @@ def order_complete(date,login_name):
     for order in orders:
         total_price+=order["price"] # calculate total price
         total_quantity+=order["quantity"]
+    query="""
+            select OB.isbn, B.title,B.subject,B.isbn, sum(OB.quantity) as order_count
+            from Order_book OB, Books B
+            where OB.isbn = B.isbn
+            and order_date like ? /*insert '%yyyy-mm%'*/
+            group by OB.isbn
+            order by order_count desc
+            limit 4
+        """
+    for order in orders:
+        recommendations=db_query(query,[order['order_date']])
+        order['recommendations']=recommendations
     return render_template('order_complete.html',orders=orders,date=date,total_price=total_price,total_quantity=total_quantity)
 
 @app.route('/book/<isbn>', methods=['GET','POST'])
@@ -165,11 +179,10 @@ def book(isbn):
                     n=request.form['n']
                     opinions=db_query(opinion_query,[isbn,n])
                        
-
                     #sql for find top n reviews
                 elif action=='rate_review':
                     rating=request.form['rating']
-                    opinion_id=request.form['opinion_id']                
+                    opinion_id=request.form['opinion_id']
                     #sql to rate opinion
                 elif action=='rate_book':
                     score=request.form['score']
@@ -227,6 +240,7 @@ def search():
                     and B.title like ? /*insert title*/
                     and B.subject like ? /*insert subject*/
                     and B.publisher like ? /*insert publisher*/
+                    %s /*insert year*/
                     ) 
                 group by RB.isbn
                 ) C
@@ -255,6 +269,12 @@ def search():
             #Check title
             if request.form['book_name'] !="":
                 book_name = '%'+request.form['book_name']+'%'
+
+            if request.form['year_of_publication'] !="":
+                year_of_publication = "and B.year_of_publication="+request.form['year_of_publication']
+                query=query%year_of_publication
+            else:
+                query=query%''
                 
             params=[author,book_name,subject,publisher,int(book_rating)]
             # params=['%%','%%','%%','%'+request.form['book_name']+'%',5]  
@@ -263,6 +283,7 @@ def search():
             book_name = request.form['book_name']
             params=['%'+book_name+'%']
 
+# 
         books = db_query( query, params)
         params={}
         params['author']=author.strip("%")
@@ -300,7 +321,6 @@ def profile(login_name):
 def signup():
     error = None
     if request.method == 'POST':
-        #Username not correct
         name = request.form['name']
         username = request.form['username']
         password = request.form['password']
@@ -308,11 +328,16 @@ def signup():
         address = request.form['address']
         ccn = request.form['ccn']
         user = db_query('select * from Customers where login_name = ?', [username], one=True)
-        print user
         if user is None:
             ## New user sign up
             # g.db.execute('insert into Customers (login_name,full_name,password,credit_card_no,address,phone_no) VALUES (?,?,?,?,?,?)',[username,name,password,ccn,address,phone])
             # g.db.commit()
+            if name == "":
+                error="Please enter a valid name."
+                return render_template('signup.html', error=error)
+            elif password == "":
+                error="Please enter a valid password."
+                return render_template('signup.html', error=error)
             e = db_insert('insert into Customers (login_name,full_name,password,credit_card_no,address,phone_no) VALUES (?,?,?,?,?,?)',[username,name,password,ccn,address,phone])
             if e!=True:
                 return render_template('signup.html',error=str(e))

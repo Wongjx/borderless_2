@@ -12,7 +12,9 @@
     {% if params.avg_score %}<h4>Rating more than: {{params.avg_score}}</h4>{%endif%}
     <br>
     <div class="row">
+
     <form method="POST" id="search_order" action="/order">
+      <div class="row" align="center"><button class="btn btn-primary" id="search_order">ORDER NOW!</button></div>
     {%for s in books%}
       <div class="row">
       <div class="col-md-4">
@@ -36,7 +38,7 @@
       </div>
 
         {%endfor%}
-    <div class="row" align="center"><button class="btn btn-primary" id="search_order">ORDER NOW!</button></div>
+    
     </form>
     {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
 

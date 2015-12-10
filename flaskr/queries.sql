@@ -26,10 +26,11 @@ where RB.isbn = B.isbn
 and RB.login_name = 'xiexin2011' /*insert login_name*/;
 
 /*list of feedbacks ranked wrt usefulness*/
-select C.full_name, C.login_name, B.title, B.isbn, RO.rating
-from Books B, Rate_opinion RO, Customers C
+select C.full_name, C.login_name, B.title, B.isbn, RO.rating, RB.comment
+from Books B, Rate_opinion RO, Rate_book RB, Customers C
 where RO.isbn = B.isbn
 and RO.rated_id = C.login_name
+and RO.rated_id= RB.login_name
 and RO.rater_id = 'xiexin2011' /*insert login_name*/;
 
 /*4 New Book*/
@@ -72,7 +73,8 @@ order by B.year_of_publication desc
 ;
 
 /*Find books that have X title by X author and X publisher and X subject ordered by avg feedback score*/
-select B2.isbn, B2.title, B2.year_of_publication, B2.publisher, B2.subject, C.avg_score
+
+select B2.isbn, B2.title, B2.year_of_publication, B2.publisher, B2.subject, B2.quantity_left,C.avg_score
 from Books B2, 
 	(select RB.isbn, avg(RB.score) as avg_score
 	from Rate_book RB
@@ -83,16 +85,20 @@ from Books B2,
 			(select * 
 			from Authors_write A
 			where A.isbn = B.isbn
-			and A.name like '%%'
+			and A.name like ?
 			) /*insert author name*/
-		and B.title like '%%' /*insert title*/
-		and B.subject like '%%' /*insert subject*/
-		and B.publisher like '%mcgraw%' /*insert publisher*/
+		and B.title like ? /*insert title*/
+		and B.subject like ? /*insert subject*/
+		and B.publisher like ? /*insert publisher*/
+		and B.year_of_publication=2010 /*insert year*/
 		) 
 	group by RB.isbn
 	) C
 where C.isbn = B2.isbn
+and C.avg_score>=?
 order by C.avg_score desc
+            
+
 ;
 
 
@@ -131,13 +137,13 @@ order by  sales_count desc
 
 /*11 Monthly Stats*/
 /*List of m most popular books*/
-select OB.isbn, B.title, sum(OB.quantity) as order_count
+select OB.isbn, B.title,B.subject,B.isbn, sum(OB.quantity) as order_count
 from Order_book OB, Books B
 where OB.isbn = B.isbn
 and order_date like '%2015-12%' /*insert '%yyyy-mm%'*/
 group by OB.isbn
 order by order_count desc
-limit 10 /*insert m. Note: limit m only applies when m < count(*) */
+limit 4 /*insert m. Note: limit m only applies when m < count(*) */
 ;
 
 /*List of m most popular authors*/

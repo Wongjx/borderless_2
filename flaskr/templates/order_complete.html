@@ -37,6 +37,23 @@
 
       </div>
       </div>
+      <h2>Those who buy this also buy</h2>
+        <div class="panel">
+        <div class="panel-body">
+
+          <div class="row">
+            {% for recommendation in order.recommendations%}
+            <div class="col-md-3 portfolio-item">
+                <a href="/book/{{recommendation.isbn}}">
+                    <img class="img-responsive" src="/static/img/{{recommendation.subject}}.jpg" alt="">
+                </a>
+                <h4>{{recommendation.title}}</h4>
+            </div>
+            {% endfor %}
+
+        </div>
+        </div>
+        </div>
 
 
     </div>
@@ -47,34 +64,7 @@
     <div class="container">
   <div class="row">
       <div class="col col-sm-12">
-        <h1 class="page-header">Others also buy</h1>
-        <div class="panel">
-        <div class="panel-body">
 
-          <div class="row">
-            <div class="col-md-3 portfolio-item">
-                <a href="#">
-                    <img class="img-responsive" src="http://placehold.it/750x450" alt="">
-                </a>
-            </div>
-            <div class="col-md-3 portfolio-item">
-                <a href="#">
-                    <img class="img-responsive" src="http://placehold.it/750x450" alt="">
-                </a>
-            </div>
-            <div class="col-md-3 portfolio-item">
-                <a href="#">
-                    <img class="img-responsive" src="http://placehold.it/750x450" alt="">
-                </a>
-            </div>
-            <div class="col-md-3 portfolio-item">
-                <a href="#">
-                    <img class="img-responsive" src="http://placehold.it/750x450" alt="">
-                </a>
-            </div>
-        </div>
-        </div>
-        </div>
 
       </div>
     </div>
