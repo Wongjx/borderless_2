@@ -57,7 +57,7 @@ def db_insert (query, args=()):
         print e
         return e
 def find_authors(isbn):
-    author_list=db_query('select name from Authors where author_id in (select author_id from Writes where isbn==?)',[isbn])
+    author_list=db_query('select name from Authors_write where isbn==?',[isbn])
     authors=""
     for author in author_list:
         authors+=author['name']+","
@@ -140,12 +140,32 @@ def book(isbn):
             error = 'Invalid ISBN'
             return redirect(url_for('main'))
         else:
+            avg_score=None
             if request.method=='POST':
                 action=request.form['action']
                 if action=='find_reviews':
+                    opinion_query="""
+                    select RB.rb_id, RB.isbn, RB.login_name, RB.score, RB.comment, RB.date, A.usefulness_score
+                    from Rate_book RB, (select isbn, rated_id , avg(rating) as usefulness_score 
+                        from (select RO.isbn, RO.rated_id, RO.rating
+                            from Rate_opinion RO
+                            where exists 
+                                (select *
+                                from Rate_book
+                                where isbn = ?
+                                and isbn = RO.isbn
+                                )
+                            )
+                        group by rated_id
+                        ) A
+                    where RB.isbn = A.isbn
+                    and RB.login_name = A.rated_id
+                    order by A.usefulness_score desc
+                    limit ?"""
                     n=request.form['n']
-                    opinions=db_query('select * from Rate_opinion where isbn==? order by rating desc',[book['isbn']])
-                    opinions=opinions[:int(n)]                
+                    opinions=db_query(opinion_query,[isbn,n])
+                       
+
                     #sql for find top n reviews
                 elif action=='rate_review':
                     rating=request.form['rating']
@@ -161,58 +181,102 @@ def book(isbn):
             book['authors']=find_authors(book['isbn'])
             exist_comment=db_query('Select * from Rate_book where isbn = ? and login_name = ?', [isbn,login_name], one=True)
             # find if comment made by this user exist, dont allow him to comment
-            opinions=db_query('Select * from Rate_book where isbn = ?', [isbn])
-            # opinions on this book
-            avg_score=db_query('Select avg(score) from Rate_book where isbn = ?', [isbn])
-            avg_score=avg_score[0]['avg(score)']
-            avg_score="%.2f" % avg_score
-            # avg_score on this book
-            for opinion in opinions:
-                avg_rating=db_query('select avg(rating) from Rate_opinion where rated_id in (select  login_name from Rate_book where isbn==? and login_name==?)',[opinion['isbn'],opinion['login_name']])
-                avg_rating=avg_rating[0]['avg(rating)']
-                # avg_rating of this opinion
-                if avg_rating<2 and avg_rating>=1:
-                    avg_rating="Useful"
-                elif avg_rating>=2:
-                    avg_rating="Very Useful"
-                else:
-                    avg_rating="Useless"
-                opinion['avg_rating']=avg_rating
+            if request.method=="GET":
+                query="""
+                        select RB.rb_id, RB.isbn, RB.login_name, RB.score, RB.comment, RB.date, A.usefulness_score
+                        from Rate_book RB, (select isbn, rated_id , avg(rating) as usefulness_score 
+                            from (select RO.isbn, RO.rated_id, RO.rating
+                                from Rate_opinion RO
+                                where exists 
+                                    (select *
+                                    from Rate_book
+                                    where isbn = ?
+                                    and isbn = RO.isbn
+                                    )
+                                )
+                            group by rated_id
+                            ) A
+                        where RB.isbn = A.isbn
+                        and RB.login_name = A.rated_id
+                """
+                opinions=db_query(query, [isbn])
+                
         
         return render_template('individual_book.html',book=book,opinions=opinions,exist_comment=exist_comment,avg_score=avg_score)
 
 @app.route('/search', methods=['GET','POST'])
 def search():
     error = None
-    if request.method == 'POST':
-        query = "select * from Books where title like ?"
-        book_name = request.form['book_name']
-        params=['%'+book_name+'%']
+    if request.method == 'POST':        
         # Check if advanced search
         if request.form.has_key("advance_search"):
-                #Check author
-                if request.form['author'] != "":
-                    author =  request.form['author']
-                    
-                #Check publisher
-                if request.form['publisher'] != "":
-                    publisher =  request.form['publisher']
-                    query = search_query_wrapper(query,"publisher")
-                    params.append('%'+publisher+'%')
-                #Check Genre
-                if request.form['subject'] != "None":
-                    subject = request.form['subject']
-                    query = search_query_wrapper(query,"subject")
-                    params.append('%'+subject+'%')
+            query="""
+            select B2.isbn, B2.title, B2.year_of_publication, B2.publisher, B2.subject, B2.quantity_left,C.avg_score
+            from Books B2, 
+                (select RB.isbn, avg(RB.score) as avg_score
+                from Rate_book RB
+                where RB.isbn in
+                    (select B.isbn
+                    from Books B
+                    where exists
+                        (select * 
+                        from Authors_write A
+                        where A.isbn = B.isbn
+                        and A.name like ?
+                        ) /*insert author name*/
+                    and B.title like ? /*insert title*/
+                    and B.subject like ? /*insert subject*/
+                    and B.publisher like ? /*insert publisher*/
+                    ) 
+                group by RB.isbn
+                ) C
+            where C.isbn = B2.isbn
+            and C.avg_score>=?
+            order by C.avg_score desc
+            
+            """
+            book_rating = request.form['book_rating']
+            author='%'+'%' 
+            publisher = '%'+'%'
+            subject='%'+'%' 
+            book_name='%'+'%'
+            #Check author     
+            if request.form['author'] !="":
+                author = '%'+ request.form['author'] +'%' 
+                                
+            #Check publisher
+            if request.form['publisher'] != "":
+                publisher = '%'+ request.form['publisher']+'%'
+                
+            #Check Genre
+            if request.form['subject'] != "None":
+                subject = '%'+request.form['subject']+'%'
+
+            #Check title
+            if request.form['book_name'] !="":
+                book_name = '%'+request.form['book_name']+'%'
+                
+            params=[author,book_name,subject,publisher,int(book_rating)]
+            # params=['%%','%%','%%','%'+request.form['book_name']+'%',5]  
+        else:
+            query = "select * from Books where title like ?"
+            book_name = request.form['book_name']
+            params=['%'+book_name+'%']
 
         books = db_query( query, params)
+        params={}
+        params['author']=author.strip("%")
+        params['publisher']=publisher.strip("%")
+        params['subject']=subject.strip("%")
+        params['book_name']=book_name.strip("%")
+        params['avg_score']=book_rating
         if len(books)<1:
             error = 'We are sorry! Unable to find what you are looking for!'
             return render_template('search_result.html',error=error)
         else:
             for book in books:
                 book['authors']=find_authors(book['isbn'])
-        return render_template('search_result.html',books=books)
+        return render_template('search_result.html',books=books,params=params)
 
 
 
@@ -221,8 +285,8 @@ def profile(login_name):
     # retreive orders from date and login_name
     user = db_query('Select * from Customers where login_name = ? ', [login_name], one=True)
     orders = db_query('Select * from Order_book where login_name = ?', [login_name])
-    opinions = db_query('Select * from Rate_book where login_name = ?',[login_name])
-    ratings = db_query('Select * from Rate_opinion where rater_id = ? order by rating',[login_name])
+    opinions = db_query('select B.title,  B.isbn, RB.score, RB.comment from Books B, Rate_book RB where RB.isbn = B.isbn and RB.login_name = ?',[login_name])
+    ratings = db_query('select C.full_name, C.login_name, B.title, B.isbn, RO.rating,RB.comment from Books B, Rate_opinion RO,Rate_book RB, Customers C where RO.isbn = B.isbn and RO.rated_id = C.login_name and RO.rated_id= RB.login_name and RO.rater_id = ? order by C.login_name',[login_name])
     return render_template('user_profile.html',user=user, orders = orders,opinions=opinions,ratings=ratings)
 # =======
     # orders = db_query('Select * from Order_book where login_name = ? order by order_id', [login_name])

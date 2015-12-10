@@ -47,7 +47,11 @@
         <div class="col-md-9">
           <h3>Rating: {{opinion.score}}</h3>
           <p>{{opinion.comment}}</p>
-          <h4>Usefulness: {{opinion.avg_rating}}</h4>
+          <h4>Usefulness: 
+            {% if opinion.usefulness_score<=1 and opinion.usefulness_score<=1.8 %}Useful
+            {% elif opinion.usefulness_score>1.8%}Very Useful
+            {% elif opinion.usefulness_score<1 %}Useless
+            {% endif %}</h4>
           {% if opinion.login_name!=session.user.login_name%}
           <form method="post">
           <button class="btn btn-default" name="rating" value="0">Useless</button>
@@ -70,8 +74,8 @@
         <h1>Rate this book!</h1>
         <form method="post">
         <label for="score" style="color:black">Score </label>
-        <input type='range' id="score" name='score' max='10' min='0' value='0' oninput=changeinput('score')>
-        <output name='isbn_score_out' id='isbn_score_out'>0</output>
+        <input type='range' id="score" name='score' max='10' min='0' value='0' oninput=changeinput()>
+        <output name='score_out' id='score_out'>0</output>
         <hr>
         <textarea style="width:100%;height:100px" maxlength="100" name="comment"></textarea>
         <hr>
@@ -115,12 +119,9 @@
       $('#advance_search_box').toggle("slow")
     });
 
-    var changeinput = function(isbn){
-    // console.log($('#isbn_'+isbn+'_out')['0'])
-    // console.log($('#isbn_'+isbn+'_out'))
-    // test=$(this)
-    $('#isbn_'+isbn+'_out')['0'].value = $('#score')['0'].value;
-    // $('#isbn_978-0764197970_out').value = $('#isbn_978-0764197970_in').value;
+    var changeinput = function(){
+    
+    $('#score_out')['0'].value = $('#score')['0'].value;
 };
 
     // this is the id of the form

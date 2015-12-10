@@ -5,10 +5,14 @@
 
 <header class="masthead">
   <div class="container">
-    <h1>Search Result</h1>
+    <h1>Search Result for</h1>
+    {% if params.author %}<h4>Author: {{params.author}}</h4>{%endif%}
+    {% if params.publisher %}<h4>Publisher: {{params.publisher}}</h4>{%endif%}
+    {% if params.subject %}<h4>Subject: {{params.subject}}</h4>{%endif%}
+    {% if params.avg_score %}<h4>Rating more than: {{params.avg_score}}</h4>{%endif%}
     <br>
     <div class="row">
-
+    <form method="POST" id="search_order" action="/order">
     {%for s in books%}
       <div class="row">
       <div class="col-md-4">
@@ -21,12 +25,19 @@
         <h4>Authors: {{s.authors}}</h4>
         <h4>Year of publication: {{s.year_of_publication}}</h4>
         <h4>Publisher: {{s.publisher}}</h4>
+        <h4>Average Score: {{s.avg_score}}</h4>
+        <h4>Order</h4>
+        
+        <input type='range' class='book' name='isbn_{{s.isbn}}_in' id='isbn_{{s.isbn}}_in' max='{{s.quantity_left}}' min='0' value='0' oninput=changeinput('{{s.isbn}}') style="width:50%">
+        <output name='isbn_{{s.isbn}}_out' id='isbn_{{s.isbn}}_out'>0</output>
+        
         </div>
       </div>
       </div>
 
         {%endfor%}
-
+    <div class="row" align="center"><button class="btn btn-primary" id="search_order">ORDER NOW!</button></div>
+    </form>
     {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
 
     </div>
@@ -38,9 +49,14 @@
 
     </div>
     <script type="text/javascript">
+
     $('#advance_search').click(function(){
       $('#advance_search_box').toggle("slow")
     });
+    var changeinput = function(isbn){
+    $('#isbn_'+isbn+'_out')['0'].value = $('#isbn_'+isbn+'_in')['0'].value;
+    };
+
     </script>
 
 {%endblock%}

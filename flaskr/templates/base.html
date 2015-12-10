@@ -58,9 +58,10 @@
                   <label for="publisher" style="color:black">Publisher</label><input type="text" name="publisher" class="form-control" placeholder="Publisher">
                   </div>
                   <div  class="input-group">
-                  <label for="genre" style="color:black">Genre </label>
-                  
-                  <select class="form-control">
+                  <label for="subject" style="color:black">Subject</label>
+
+                  <select class="form-control" name="subject">
+                    <option name="genre" value="None">None</option>
                     <option name="genre" value="biology">Biology</option>
                     <option name="genre" value="chemistry">Chemistry</option>
                     <option name="genre" value="computer science">Computer science</option>
@@ -74,6 +75,11 @@
                     <option name="genre" value="physics">Physics</option>
 
                   </select>
+
+                  <hr>
+                  <label for="rating" style="color:black">Book rating more than:</label>
+                  <input type='range' id="book_rating" name='book_rating' max='10' min='0' value='0' oninput=base_change_input()>
+                  <output name='book_rating_out' id='book_rating_out'>0</output>
                  </div></div>
 
                 </form>
@@ -98,7 +104,9 @@ $("#main").click(function(){
   console.log("click")
   window.location.replace("{{url_for('main')}}")
 });
-
+var base_change_input = function(){
+    $('#book_rating_out')['0'].value = $('#book_rating')['0'].value;
+};
 </script>
 <!-- /.navbar -->
 {% with messages = get_flashed_messages() %}
