@@ -9,8 +9,8 @@ import re
 #configuration
 
 # DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless_2//flaskr//tmp//flaskr.db'
-# DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
-DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
+DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
+# DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
 
 DEBUG = True
 SECRET_KEY = 'development key'
@@ -56,8 +56,9 @@ def db_insert (query, args=()):
     except Exception, e:
         print e
         return e
+
 def find_authors(isbn):
-    author_list=db_query('select name from Authors where author_id in (select author_id from Writes where isbn==?)',[isbn])
+    author_list=db_query('select name from Authors_write where isbn = ?',[isbn])
     authors=""
     for author in author_list:
         authors+=author['name']+","
@@ -145,11 +146,11 @@ def book(isbn):
                 if action=='find_reviews':
                     n=request.form['n']
                     opinions=db_query('select * from Rate_opinion where isbn==? order by rating desc',[book['isbn']])
-                    opinions=opinions[:int(n)]                
+                    opinions=opinions[:int(n)]
                     #sql for find top n reviews
                 elif action=='rate_review':
                     rating=request.form['rating']
-                    opinion_id=request.form['opinion_id']                
+                    opinion_id=request.form['opinion_id']
                     #sql to rate opinion
                 elif action=='rate_book':
                     score=request.form['score']
@@ -178,33 +179,41 @@ def book(isbn):
                 else:
                     avg_rating="Useless"
                 opinion['avg_rating']=avg_rating
-        
+
         return render_template('individual_book.html',book=book,opinions=opinions,exist_comment=exist_comment,avg_score=avg_score)
 
 @app.route('/search', methods=['GET','POST'])
 def search():
     error = None
     if request.method == 'POST':
-        query = "select * from Books where title like ?"
+        query = "select * from Books B where B.title like ?"
         book_name = request.form['book_name']
         params=['%'+book_name+'%']
         # Check if advanced search
         if request.form.has_key("advance_search"):
-                #Check author
-                if request.form['author'] != "":
-                    author =  request.form['author']
-                    
-                #Check publisher
-                if request.form['publisher'] != "":
-                    publisher =  request.form['publisher']
-                    query = search_query_wrapper(query,"publisher")
-                    params.append('%'+publisher+'%')
-                #Check Genre
-                if request.form['subject'] != "None":
-                    subject = request.form['subject']
-                    query = search_query_wrapper(query,"subject")
-                    params.append('%'+subject+'%')
-
+            print request.form
+            #Check author
+            if request.form['author'] != "":
+                author =  request.form['author']
+                query = query+ "and exists \
+                               (select * \
+                	           from Authors_write A \
+                	           where A.isbn = B.isbn \
+                	           and A.name like ?)"
+                params.append('%'+author+'%')
+            #Check publisher
+            if request.form['publisher'] != "":
+                publisher =  request.form['publisher']
+                query = search_query_wrapper(query,"b.publisher")
+                params.append('%'+publisher+'%')
+            #Check Genre
+            if request.form['subject'] != "None":
+                subject = request.form['subject']
+                query = search_query_wrapper(query,"B.subject")
+                params.append('%'+subject+'%')
+        print " "
+        print query
+        print " "
         books = db_query( query, params)
         if len(books)<1:
             error = 'We are sorry! Unable to find what you are looking for!'
