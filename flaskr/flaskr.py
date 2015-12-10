@@ -7,9 +7,9 @@ import datetime, time
 import re
 
 #configuration
-DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless_2//flaskr//tmp//flaskr.db'
+# DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless_2//flaskr//tmp//flaskr.db'
 # DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
-# DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
+DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
 DEBUG = True
 SECRET_KEY = 'development key'
 USERNAME = 'admin'
@@ -116,8 +116,8 @@ def order():
         return render_template('order_complete.html')
 
 @app.route('/order_complete/<date>/<username>', methods=['GET','POST'])
-def order_complete():
-    return render_template('order_complete.html')
+def order_complete(date,username):
+    return render_template('order_complete.html',orders=orders)
 
 @app.route('/book/<isbn>', methods=['GET','POST'])
 def book(isbn):
@@ -130,6 +130,25 @@ def book(isbn):
             error = 'Invalid ISBN'
             return redirect(url_for('main'))
         else:
+            if request.method=='POST':
+                print "in post"
+                action=request.form['action']
+                if action=='find_reviews':
+                    n=request.form['n']
+                    opinions=db_query('select * from Rate_opinion where isbn==? order by rating desc',[book['isbn']])
+                    opinions=opinions[:int(n)]                
+                    #sql for find top n reviews
+                elif action=='rate_review':
+                    rating=request.form['rating']
+                    opinion_id=request.form['opinion_id']                
+                    #sql to rate opinion
+                elif action=='rate_book':
+                    score=request.form['score']
+                    comment=request.form['comment']
+                    date=datetime.datetime.now()
+                    date=date.strftime("%Y-%m-%d|%H:%M:%S")
+                    g.db.execute('insert into Rate_book values (?,?,?,?,?,?)',[None,isbn,login_name,score,comment,date])
+                    g.db.commit()
             book['authors']=find_authors(book['isbn'])
             exist_comment=db_query('Select * from Rate_book where isbn = ? and login_name = ?', [isbn,login_name], one=True)
             # find if comment made by this user exist, dont allow him to comment
@@ -150,23 +169,7 @@ def book(isbn):
                 else:
                     avg_rating="Useless"
                 opinion['avg_rating']=avg_rating
-        if request.method=='POST':
-            action=request.form['action']
-            if action=='find_reviews':
-                n=request.form['n']
-                opinions=db_query('select * from Rate_opinion where isbn==? order by rating desc',[book['isbn']])
-                opinions=opinions[:int(n)]                
-                #sql for find top n reviews
-            elif action=='rate_review':
-                rating=request.form['rating']
-                opinion_id=request.form['opinion_id']                
-                #sql to rate opinion
-            elif action=='rate_book':
-                score=request.form['score']
-                comment=request.form['comment']
-                date=datetime.datetime.now()
-                date=date.strftime("%Y-%m-%d|%H:%M:%S")
-                # sql to rate book
+        
         return render_template('individual_book.html',book=book,opinions=opinions,exist_comment=exist_comment,avg_score=avg_score)
 
 @app.route('/search', methods=['GET','POST'])
