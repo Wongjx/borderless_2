@@ -27,7 +27,7 @@
       </div>
       {% if opinions %}
       <div class="row">
-        <h2 style="color:#FF3333">User Reviews</h2> 
+        <h2 style="color:#FF3333">User Reviews</h2>
         <form method="post">
         <input type="integer" placeholder="1-{{opinions|count}}" name="n">
         <button class="btn btn-default" id="most_useful">most useful review</button>
@@ -41,8 +41,8 @@
 
         <h1><span class="glyphicon glyphicon-user" style="color:#FF3333"></span></h1>
         <p>{{opinion.login_name}}</p>
-          
-          
+
+
         </div>
         <div class="col-md-9">
           <h3>Rating: {{opinion.score}}</h3>
@@ -68,21 +68,10 @@
       {% if not exist_comment %}
       <div class="row">
         <h1>Rate this book!</h1>
-        <form method="post"> 
+        <form method="post">
         <label for="score" style="color:black">Score </label>
-        <select class="form-control" style="width:50%" name="score">
-          <option value="0">0</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-          <option value="9">9</option>
-          <option value="10">10</option>
-        </select>
+        <input type='range' id="score" name='score' max='10' min='0' value='0' oninput=changeinput('score')>
+        <output name='isbn_score_out' id='isbn_score_out'>0</output>
         <hr>
         <textarea style="width:100%;height:100px" maxlength="100" name="comment"></textarea>
         <hr>
@@ -103,7 +92,7 @@
                     <form method="POST" action="/order">
                     <li><h3 class="highlight">Order Now!<i class="glyphicon glyphicon-dashboard pull-right"></i></h3></li>
                     <button class="btn btn-primary" id="order_button" name="order_button">Place Order</button>
-                    <input class="hidden" name="isbn_{{book.isbn}}" value="1">
+                    <input class="hidden" name="isbn_{{book.isbn}}_in" value="1">
                     </form>
         </ul>
 
@@ -125,6 +114,14 @@
     $('#advance_search').click(function(){
       $('#advance_search_box').toggle("slow")
     });
+
+    var changeinput = function(isbn){
+    // console.log($('#isbn_'+isbn+'_out')['0'])
+    // console.log($('#isbn_'+isbn+'_out'))
+    // test=$(this)
+    $('#isbn_'+isbn+'_out')['0'].value = $('#score')['0'].value;
+    // $('#isbn_978-0764197970_out').value = $('#isbn_978-0764197970_in').value;
+};
 
     // this is the id of the form
     // $("#order_button").click(function(e) {

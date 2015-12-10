@@ -7,9 +7,11 @@ import datetime, time
 import re
 
 #configuration
+
 # DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless_2//flaskr//tmp//flaskr.db'
 # DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
 DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
+
 DEBUG = True
 SECRET_KEY = 'development key'
 USERNAME = 'admin'
@@ -35,6 +37,9 @@ def get_db():
         db = g.db = connect_db()
     db.row_factory = make_dicts
     return db
+
+def search_query_wrapper(query,parameter):
+    return "{0} and {1} like ?".format(query, parameter)
 
 def db_query(query, args=(), one=False):
     cur = get_db().execute(query, args)
@@ -73,7 +78,7 @@ def close_connection(exception):
 @app.route('/main', methods=['GET','POST'])
 def main():
     login_name = session['user']['login_name']
-    
+
     if request.method == 'GET':
         # login_name=request.args['login_name']
         print login_name
@@ -82,11 +87,11 @@ def main():
         else:
             error = None
             book_list = db_query('select * from Books where quantity_left>0')
-            for book in book_list:                
+            for book in book_list:
                 book['authors']=find_authors(book['isbn'])
             return render_template('main.html',book_list=book_list)
 
-@app.route('/order', methods=['GET','POST'])
+@app.route('/order', methods=['POST'])
 def order():
     login_name = session['user']['login_name']
     if request.method == 'POST':
@@ -95,29 +100,34 @@ def order():
         status="processing"
         error=None
 
-        if len(request.form) <=1:
-            return redirect
+        # if len(request.form) <=1: #if nothing ordered
+        #     return redirect
 
         for k in request.form:
+            print k
             if 'isbn' in k:
-                isbn=k[5:]                    
-                quantity=int(request.form[k]) # string will not be passed, input type='integer'             
+                isbn=k[5:-3]
+                quantity=int(request.form[k]) # string will not be passed, input type='integer'
                 if quantity<1:
-                    break
-                else:               
-                    # decrement if quantity ordered > quantity left     
+                    continue
+                else:
+                    # decrement if quantity ordered > quantity left
                     g.db.execute('update Books set quantity_left = quantity_left - 1 where isbn=? and quantity_left>?',[isbn,quantity]) #decrement number of book available
                     g.db.execute('insert into Order_book (login_name,isbn,order_date,status,quantity) VALUES (?,?,?,?,?)',[login_name,isbn,order_date,status,quantity]) #insert order
                     g.db.commit()
         return redirect(url_for('order_complete',date=order_date,login_name=login_name,error=error)) # redirect to order_complete with date and username
 
 
-    elif request.method == 'GET':
-        return render_template('order_complete.html')
-
-@app.route('/order_complete/<date>/<username>', methods=['GET','POST'])
-def order_complete(date,username):
-    return render_template('order_complete.html',orders=orders)
+@app.route('/order_complete/<date>/<login_name>', methods=['GET','POST'])
+def order_complete(date,login_name):
+    # retreive orders from date and login_name
+    orders = db_query('Select * from Order_book, Books where login_name = ? and order_date=? and Order_book.isbn==Books.isbn', [login_name,date])
+    total_price=0
+    total_quantity=0
+    for order in orders:
+        total_price+=order["price"] # calculate total price
+        total_quantity+=order["quantity"]
+    return render_template('order_complete.html',orders=orders,date=date,total_price=total_price,total_quantity=total_quantity)
 
 @app.route('/book/<isbn>', methods=['GET','POST'])
 def book(isbn):
@@ -131,7 +141,6 @@ def book(isbn):
             return redirect(url_for('main'))
         else:
             if request.method=='POST':
-                print "in post"
                 action=request.form['action']
                 if action=='find_reviews':
                     n=request.form['n']
@@ -176,16 +185,36 @@ def book(isbn):
 def search():
     error = None
     if request.method == 'POST':
-        print request.form
+        query = "select * from Books where title like ?"
         book_name = request.form['book_name']
-        books = db_query('Select * from Books where title like ?', ['%'+book_name+'%'])
-        if books is None:
+        params=['%'+book_name+'%']
+        # Check if advanced search
+        if request.form.has_key("advance_search"):
+                #Check author
+                if request.form['author'] != "":
+                    author =  request.form['author']
+                    
+                #Check publisher
+                if request.form['publisher'] != "":
+                    publisher =  request.form['publisher']
+                    query = search_query_wrapper(query,"publisher")
+                    params.append('%'+publisher+'%')
+                #Check Genre
+                if request.form['subject'] != "None":
+                    subject = request.form['subject']
+                    query = search_query_wrapper(query,"subject")
+                    params.append('%'+subject+'%')
+
+        books = db_query( query, params)
+        if len(books)<1:
             error = 'We are sorry! Unable to find what you are looking for!'
             return render_template('search_result.html',error=error)
         else:
             for book in books:
                 book['authors']=find_authors(book['isbn'])
-        return render_template('search_result.html',search=books)
+        return render_template('search_result.html',books=books)
+
+
 
 @app.route('/profile/<login_name>', methods=['GET'])
 def profile(login_name):
@@ -193,8 +222,14 @@ def profile(login_name):
     user = db_query('Select * from Customers where login_name = ? ', [login_name], one=True)
     orders = db_query('Select * from Order_book where login_name = ?', [login_name])
     opinions = db_query('Select * from Rate_book where login_name = ?',[login_name])
-    ratings = db_query('Select * from Rate_opinion where rater_id = ?',[login_name])
+    ratings = db_query('Select * from Rate_opinion where rater_id = ? order by rating',[login_name])
     return render_template('user_profile.html',user=user, orders = orders,opinions=opinions,ratings=ratings)
+# =======
+    # orders = db_query('Select * from Order_book where login_name = ? order by order_id', [login_name])
+    # book_ratings = db_query('Select * from Rate_book where login_name = ? order by score', [login_name])
+    # comment_ratings = db_query('Select * from Rate_opinion where rater_id = ? order by rating', [login_name])
+    # return render_template('user_profile.html',user=user, orders = orders, book_ratings = [book_ratings,len(book_ratings)], comment_ratings = [comment_ratings,len(comment_ratings)])
+# >>>>>>> 2f9b98161190375a9a2c0fc9a4dbcae2114cc9bc
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -309,5 +344,9 @@ if __name__ == '__main__':
 def init_db():
     with closing(connect_db()) as db:
         with app.open_resource('schema.sql', mode='r') as f:
+            db.cursor().executescript(f.read())
+        db.commit()
+    with closing(connect_db()) as db:
+        with app.open_resource('populate_tables.sql', mode='r') as f:
             db.cursor().executescript(f.read())
         db.commit()

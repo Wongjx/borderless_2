@@ -1,9 +1,9 @@
-drop table if exists Books;
-drop table if exists Authors_write;
-drop table if exists Customers;
-drop table if exists Rate_book;
-drop table if exists Rate_opinion;
 drop table if exists Order_book;
+drop table if exists Rate_opinion;
+drop table if exists Rate_book;
+drop table if exists Authors_write;
+drop table if exists Books;
+drop table if exists Customers;
 
 create table Books (isbn char(14) primary key,
                     title varchar(128) not null,

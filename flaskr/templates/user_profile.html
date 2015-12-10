@@ -105,6 +105,7 @@
           <table id="orderTable" class="display" width="100%"></table>
 
 
+
           <h1>Past Feedback</h1>
           <table id="opinionTable" class="display" width="100%"></table>
 
@@ -113,9 +114,6 @@
           <table id="ratingTable" class="display" width="100%"></table>
 
 
-
-
-        </div>
       </div>
         <!-- script references -->
     <script type="text/javascript">
@@ -167,21 +165,24 @@
 
     var ratingSet=[]
     {% for r in ratings %}
+
     var each_data=[]
     each_data.push("{{r.isbn}}")
     each_data.push("{{r.rated_id}}")
     each_data.push("{{r.rating}}")
-    opinionSet.push(each_data)
+    ratingSet.push(each_data)
     {% endfor %}
 
     $('#ratingTable').DataTable({
             data: ratingSet,
             columns: [
                 { title: "ISBN" },
-                { title: "Opinion Owner" },
+                { title: "Comment Writer" },
                 { title: "Rating" },
             ]
         });
             </script>
 
     {%endblock%}
+
+

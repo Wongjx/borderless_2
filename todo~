@@ -3,7 +3,9 @@ Search:
 				  =>  sorted a) by year, or b) by the average score of the feedbacks
 
 Profile page:
-- Format data on page nicely
+• his/her full history of orders (book name, number of copies, date etc.)
+• his/her full history of feedbacks
+• the list of all the feedbacks he/she ranked with respect to usefulness
 
 Admin page:
 - New book

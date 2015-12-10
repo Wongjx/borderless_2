@@ -27,9 +27,6 @@
 
 
 
-
-
-
     </div>
 <script type="text/javascript">
 $('#advance_search').click(function(){
@@ -49,7 +46,21 @@ each_data.push("{{book.quantity_left}}")
 each_data.push("{{book.price}}")
 each_data.push("{{book.format}}")
 each_data.push("{{book.subject}}")
-each_data.push("<input type='integer' class='book' name='isbn_{{book.isbn}}'"+"value='0'>")
+// each_data.push("<input type='integer' class='book' name='isbn_{{book.isbn}}'"+"value='0'>")
+each_data.push("<input type='range' class='book' name='isbn_{{book.isbn}}_in' id='isbn_{{book.isbn}}_in' max='{{book.quantity_left}}' min='0' value='0' oninput=changeinput('{{book.isbn}}')>\
+<output name='isbn_{{book.isbn}}_out' id='isbn_{{book.isbn}}_out'>0</output>")
+// alert ($('myTable'))
+// $('isbn_{{book.isbn}}_in').mouseleave = function(){
+//   console.log("in")
+//   $('isbn_{{book.isbn}}_out').value = $('isbn_{{book.isbn}}_in').value;
+// }
+var changeinput = function(isbn){
+    // console.log($('#isbn_'+isbn+'_out')['0'])
+    // console.log($('#isbn_'+isbn+'_out'))
+    // test=$(this)
+    $('#isbn_'+isbn+'_out')['0'].value = $('#isbn_'+isbn+'_in')['0'].value;
+    // $('#isbn_978-0764197970_out').value = $('#isbn_978-0764197970_in').value;
+};
 number+=1
 dataSet.push(each_data)
 {% endfor %}

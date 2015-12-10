@@ -1,0 +1,216 @@
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>My-BookStore</title>
+    <meta name="generator" content="Bootply" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="css/bootstrap.min.css" rel="stylesheet">    
+    <link href="css/datatable.css" rel="stylesheet">    
+
+      <!--[if lt IE 9]>
+        <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+
+        <link href="css/styles.css" rel="stylesheet">
+
+      </head>
+      <body>
+
+
+        <!-- <header class="masthead"> -->
+        <div class="container">
+          <div class="row">
+            <div class="col col-sm-6">
+              <h1 ><a href="#" title="Statistics page for admin">Statistics</a>
+              </div>
+
+            </div>
+          </div> 
+
+           <div class="container">
+            <div class="row">
+              <div class="col col-sm-6">
+                <h2><a href="#" title="Statistics page for admin">Most Popular Books</a>
+                </div>
+
+              </div>
+            </div> 
+
+          <div class="container">
+            <div class="row-fluid">
+              <table id="p_book" class="display" cellspacing="0">
+                <thead>
+                  <tr>
+                    <th>ISBN</th>
+                    <th>Title</th>   
+                    <th>Publisher</th>
+                    <th>Quantity</th>   
+                    <th>Price</th>
+                    <th>Year Published</th>
+                    <th>Format</th>
+                    <th>Tags</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                  <tr>
+                    <td>dSBN</td>
+                    <td>Title</td>   
+                    <td>Publisher</td>
+                    <td>Quantity</td>   
+                    <td>Price</td>
+                    <td>Year Published</td>
+                    <td>Format</td>
+                    <td>Tags</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="container">
+            <div class="row">
+              <div class="col col-sm-6">
+                <h2><a href="#" title="Statistics page for admin">Most Popular Authors</a>
+                </div>
+
+              </div>
+            </div> 
+
+            <div class="container">
+              <div class="row-fluid">
+                <table id="p_author" class="display" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th>ISBN</th>
+                      <th>Title</th>   
+                      <th>Publisher</th>
+                      <th>Quantity</th>   
+                      <th>Price</th>
+                      <th>Year Published</th>
+                      <th>Format</th>
+                      <th>Tags</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    <tr>
+                      <td>dSBN</td>
+                      <td>Title</td>   
+                      <td>Publisher</td>
+                      <td>Quantity</td>   
+                      <td>Price</td>
+                      <td>Year Published</td>
+                      <td>Format</td>
+                      <td>Tags</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          <div class="container">
+            <div class="row">
+              <div class="col col-sm-6">
+                <h2><a href="#" title="Statistics page for admin">Most Popular Publishers</a>
+                </div>
+
+              </div>
+            </div> 
+
+            <div class="container">
+              <div class="row-fluid">
+                <table id="p_publisher" class="display" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th>ISBN</th>
+                      <th>Title</th>   
+                      <th>Publisher</th>
+                      <th>Quantity</th>   
+                      <th>Price</th>
+                      <th>Year Published</th>
+                      <th>Format</th>
+                      <th>Tags</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    <tr>
+                      <td>dSBN</td>
+                      <td>Title</td>   
+                      <td>Publisher</td>
+                      <td>Quantity</td>   
+                      <td>Price</td>
+                      <td>Year Published</td>
+                      <td>Format</td>
+                      <td>Tags</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <hr>
+
+            <!-- Pagination -->
+            <div class="row text-center">
+              <div class="col-lg-12">
+                <ul class="pagination">
+                  <li>
+                    <a href="#">«</a>
+                  </li>
+                  <li class="active">
+                    <a href="#">1</a>
+                  </li>
+                  <li>
+                    <a href="#">2</a>
+                  </li>
+                  <li>
+                    <a href="#">3</a>
+                  </li>
+                  <li>
+                    <a href="#">4</a>
+                  </li>
+                  <li>
+                    <a href="#">5</a>
+                  </li>
+                  <li>
+                    <a href="#">»</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <!-- /.row -->
+
+            <hr>
+
+            <!-- script references -->
+            <script src="static/js/jquery.js"></script>
+            <script src="static/js/jquery-2.1.4.js"></script>
+            <script src="static/js/bootstrap.min.js"></script>
+            <script src="static/js/scripts.js"></script>
+            <script src="static/js/datatable.js"></script>
+              <script>
+
+$('#p_book').dataTable( {
+  "columnDefs": [
+    { "targets": 0 }
+  ]
+} );
+$('#p_author').dataTable( {
+  "columnDefs": [
+    { "targets": 0 }
+  ]
+} );
+$('#p_publisher').dataTable( {
+  "columnDefs": [
+    { "targets": 0 }
+  ]
+} );
+
+    </script>
+
+</body>
+</html>
