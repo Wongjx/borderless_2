@@ -4,6 +4,7 @@
 
 <header class="masthead">
   <div class="container">
+    {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
     <h1>{{Individual}}</h1>
     <br>
     <div class="row">
@@ -48,19 +49,18 @@
           <h3>Rating: {{opinion.score}}</h3>
           <p>{{opinion.comment}}</p>
           <h4>Usefulness: 
-            {% if opinion.usefulness_score<=1 and opinion.usefulness_score<=1.8 %}Useful
-            {% elif opinion.usefulness_score>1.8%}Very Useful
+            {% if 1<=opinion.usefulness_score<=1.8 %}Useful 
+            {% elif opinion.usefulness_score>1.8 %}Very Useful
             {% elif opinion.usefulness_score<1 %}Useless
-            {% endif %}</h4>
-          {% if opinion.login_name!=session.user.login_name%}
+            {% endif %}({{opinion.usefulness_score}})</h4>
+
           <form method="post">
           <button class="btn btn-default" name="rating" value="0">Useless</button>
           <button class="btn btn-default" name="rating" value="1">UseFul</button>
           <button class="btn btn-default" name="rating" value="2">Very useful</button>
-          <input class="hidden" name='opinion_id' value="{{opinion.ro_id}}">
+          <input class="hidden" name='opinion_id' value="{{opinion.login_name}}">
           <input class="hidden" name='action' value="rate_review">
           </form>
-          {% endif %}
 
         </div>
         </div>

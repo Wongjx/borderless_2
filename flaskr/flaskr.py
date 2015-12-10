@@ -130,22 +130,25 @@ def order_complete(date,login_name):
         total_price+=order["price"] # calculate total price
         total_quantity+=order["quantity"]
     query="""
-            select OB.isbn, B.title,B.subject,B.isbn, sum(OB.quantity) as order_count
-            from Order_book OB, Books B
-            where OB.isbn = B.isbn
-            and order_date like ? /*insert '%yyyy-mm%'*/
-            group by OB.isbn
-            order by order_count desc
+            select OB2.isbn, B.title ,sum(OB1.quantity) as sales_count, B.subject
+            from Order_book OB1, Order_book OB2, Books B
+            where OB1.login_name = OB2.login_name
+            and OB2.isbn = B.isbn
+            and OB1.isbn = ? /*insert isbn*/
+            and OB1.isbn <> OB2.isbn
+            group by OB2.isbn
+            order by  sales_count desc
             limit 4
         """
     for order in orders:
-        recommendations=db_query(query,[order['order_date']])
+        recommendations=db_query(query,[order['isbn']])
         order['recommendations']=recommendations
     return render_template('order_complete.html',orders=orders,date=date,total_price=total_price,total_quantity=total_quantity)
 
 @app.route('/book/<isbn>', methods=['GET','POST'])
 def book(isbn):
     login_name=session['user']['login_name']
+    error=None
     if not login_name:
         redirect(url_for('login'))
     else:
@@ -154,6 +157,23 @@ def book(isbn):
             error = 'Invalid ISBN'
             return redirect(url_for('main'))
         else:
+            query="""
+                select RB.rb_id, RB.isbn, RB.login_name, RB.score, RB.comment, RB.date, A.usefulness_score
+                from Rate_book RB, (select isbn, rated_id , avg(rating) as usefulness_score 
+                from (select RO.isbn, RO.rated_id, RO.rating
+                    from Rate_opinion RO
+                    where exists 
+                        (select *
+                        from Rate_book
+                        where isbn = ?
+                        and isbn = RO.isbn
+                        )
+                    )
+                group by rated_id
+                ) A
+                where RB.isbn = A.isbn
+                and RB.login_name = A.rated_id
+            """
             avg_score=None
             if request.method=='POST':
                 action=request.form['action']
@@ -178,11 +198,18 @@ def book(isbn):
                     limit ?"""
                     n=request.form['n']
                     opinions=db_query(opinion_query,[isbn,n])
-                       
-                    #sql for find top n reviews
                 elif action=='rate_review':
                     rating=request.form['rating']
-                    opinion_id=request.form['opinion_id']
+                    rated_id=request.form['opinion_id']  
+                    if rated_id!=session.user.login_name:
+                        try:                  
+                            g.db.execute('insert into Rate_opinion values (?,?,?,?,?)',[None,login_name,rated_id,isbn,rating])
+                            g.db.commit()
+                        except:
+                            error="You have rated this review!"
+                    else:
+                        error="You cannot rate your own review!"
+                    opinions=db_query(query, [isbn])
                     #sql to rate opinion
                 elif action=='rate_book':
                     score=request.form['score']
@@ -191,31 +218,14 @@ def book(isbn):
                     date=date.strftime("%Y-%m-%d|%H:%M:%S")
                     g.db.execute('insert into Rate_book values (?,?,?,?,?,?)',[None,isbn,login_name,score,comment,date])
                     g.db.commit()
+                    opinions=db_query(query, [isbn])
             book['authors']=find_authors(book['isbn'])
             exist_comment=db_query('Select * from Rate_book where isbn = ? and login_name = ?', [isbn,login_name], one=True)
             # find if comment made by this user exist, dont allow him to comment
             if request.method=="GET":
-                query="""
-                        select RB.rb_id, RB.isbn, RB.login_name, RB.score, RB.comment, RB.date, A.usefulness_score
-                        from Rate_book RB, (select isbn, rated_id , avg(rating) as usefulness_score 
-                            from (select RO.isbn, RO.rated_id, RO.rating
-                                from Rate_opinion RO
-                                where exists 
-                                    (select *
-                                    from Rate_book
-                                    where isbn = ?
-                                    and isbn = RO.isbn
-                                    )
-                                )
-                            group by rated_id
-                            ) A
-                        where RB.isbn = A.isbn
-                        and RB.login_name = A.rated_id
-                """
-                opinions=db_query(query, [isbn])
-                
+                opinions=db_query(query, [isbn])               
         
-        return render_template('individual_book.html',book=book,opinions=opinions,exist_comment=exist_comment,avg_score=avg_score)
+        return render_template('individual_book.html',book=book,opinions=opinions,exist_comment=exist_comment,avg_score=avg_score,error=error)
 
 @app.route('/search', methods=['GET','POST'])
 def search():
