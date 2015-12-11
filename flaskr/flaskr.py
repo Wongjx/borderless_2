@@ -6,13 +6,12 @@ from flask import Flask,request,session,g,redirect,url_for, abort, render_templa
 import datetime, time
 import re
 
-#configuration
 
-# DATABASE = 'D://dropbox//Dropbox//Documents//Database//git//borderless_2//flaskr//tmp//flaskr.db'
-# DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless//flaskr//tmp//flaskr.db'
-#DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
-DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
 
+# DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
+# DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless_2//flaskr//tmp//flaskr.db'
+# DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
+DATABASE = 'C:/Users/mypc/Documents/borderless_2/flaskr/tmp/flaskr.db'
 
 DEBUG = True
 SECRET_KEY = 'development key'
@@ -464,8 +463,11 @@ def admin_newbook():
 
 @app.route('/admin/inventory', methods=['GET','PUT'])
 def admin_invent():
+    if request.method == 'GET':
+        inventory = db_query("select * from Books")
+        return render_template('admin inventory.html', error = 'Admin Inventory: Work in progress', book_list=inventory)
 
-    return render_template('admin inventory.html')#, error = 'Admin Inventory: Work in progress')
+    
 
 @app.route('/admin/statistics', methods=['GET','POST'])
 def admin_stats():
