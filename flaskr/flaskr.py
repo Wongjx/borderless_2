@@ -7,18 +7,12 @@ import datetime, time
 import re
 
 #configuration
-<<<<<<< HEAD
-DATABASE = 'D://dropbox//Dropbox//Documents//Database//git//borderless_2//flaskr//tmp//flaskr.db'
+
+# DATABASE = 'D://dropbox//Dropbox//Documents//Database//git//borderless_2//flaskr//tmp//flaskr.db'
 # DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless//flaskr//tmp//flaskr.db'
 #DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
-# DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
-=======
-
-# DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless_2//flaskr//tmp//flaskr.db'
-# DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
 DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
 
->>>>>>> cd10958fb73d680dca46a260df62f1388c98ab3d
 DEBUG = True
 SECRET_KEY = 'development key'
 USERNAME = 'admin'
@@ -168,44 +162,43 @@ def book(isbn):
             query="""
                 select RB.rb_id, RB.isbn, RB.login_name, RB.score, RB.comment, RB.date, A.usefulness_score
                 from Rate_book RB, (select isbn, rated_id , avg(rating) as usefulness_score 
-                from (select RO.isbn, RO.rated_id, RO.rating
-                    from Rate_opinion RO
-                    where exists 
-                        (select *
-                        from Rate_book
-                        where isbn = ?
-                        and isbn = RO.isbn
+                    from (select RO.isbn, RO.rated_id, RO.rating
+                        from Rate_opinion RO
+                        where exists 
+                            (select *
+                            from Rate_book
+                            where isbn = ? /*insert isbn*/
+                            and isbn = RO.isbn
+                            )
                         )
-                    )
-                group by rated_id
-                ) A
+                    group by rated_id
+                    ) A
                 where RB.isbn = A.isbn
                 and RB.login_name = A.rated_id
+                union
+                select RB.rb_id, RB.isbn, RB.login_name, RB.score, RB.comment, RB.date, NULL as usefulness_score
+                from Rate_book RB
+                where RB.isbn = ? /*insert isbn*/
+                and RB.login_name not in
+                    (select rated_id
+                    from Rate_opinion
+                    where isbn = ? /*insert isbn*/
+                    )
+                %s
+                ;
             """
+            opinion_query=""
             avg_score=None
             if request.method=='POST':
                 action=request.form['action']
                 if action=='find_reviews':
                     opinion_query="""
-                    select RB.rb_id, RB.isbn, RB.login_name, RB.score, RB.comment, RB.date, A.usefulness_score
-                    from Rate_book RB, (select isbn, rated_id , avg(rating) as usefulness_score 
-                        from (select RO.isbn, RO.rated_id, RO.rating
-                            from Rate_opinion RO
-                            where exists 
-                                (select *
-                                from Rate_book
-                                where isbn = ?
-                                and isbn = RO.isbn
-                                )
-                            )
-                        group by rated_id
-                        ) A
-                    where RB.isbn = A.isbn
-                    and RB.login_name = A.rated_id
-                    order by A.usefulness_score desc
-                    limit ?"""
+                    order by A.usefulness_score desc 
+                    limit %s /*insert n. Note: limit n only applies when n < count(*) */
+                    """
                     n=request.form['n']
-                    opinions=db_query(opinion_query,[isbn,n])
+                    opinion_query=opinion_query%n
+                    
                 elif action=='rate_review':
                     rating=request.form['rating']
                     rated_id=request.form['opinion_id']  
@@ -217,7 +210,7 @@ def book(isbn):
                             error="You have rated this review!"
                     else:
                         error="You cannot rate your own review!"
-                    opinions=db_query(query, [isbn])
+
                     #sql to rate opinion
                 elif action=='rate_book':
                     score=request.form['score']
@@ -226,14 +219,15 @@ def book(isbn):
                     date=date.strftime("%Y-%m-%d|%H:%M:%S")
                     g.db.execute('insert into Rate_book values (?,?,?,?,?,?)',[None,isbn,login_name,score,comment,date])
                     g.db.commit()
-                    opinions=db_query(query, [isbn])
+            query=query%opinion_query
+            opinions=db_query(query,[isbn,isbn,isbn])
             book['authors']=find_authors(book['isbn'])
             exist_comment=db_query('Select * from Rate_book where isbn = ? and login_name = ?', [isbn,login_name], one=True)
+            total_opinion_count=db_query("select count(*) as count from Rate_book, Books where Rate_book.isbn=Books.isbn and Books.isbn=?",[isbn], one=True)
             # find if comment made by this user exist, dont allow him to comment
             if request.method=="GET":
-                opinions=db_query(query, [isbn])               
-        
-        return render_template('individual_book.html',book=book,opinions=opinions,exist_comment=exist_comment,avg_score=avg_score,error=error)
+                opinions=db_query(query, [isbn,isbn,isbn])               
+        return render_template('individual_book.html',book=book,opinions=opinions,exist_comment=exist_comment,avg_score=avg_score,error=error,total_opinion_count=total_opinion_count['count'])
 
 @app.route('/search', methods=['GET','POST'])
 def search():

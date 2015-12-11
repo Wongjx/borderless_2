@@ -27,10 +27,11 @@
           <h4>Subject: {{book.subject|capitalize}}</h4>
       </div>
       {% if opinions %}
+
       <div class="row">
-        <h2 style="color:#FF3333">User Reviews</h2>
+        <h2 style="color:#FF3333">User Reviews ({{total_opinion_count}})</h2>
         <form method="post">
-        <input type="integer" placeholder="1-{{opinions|count}}" name="n">
+        <input type="integer" placeholder="Enter a number" name="n">
         <button class="btn btn-default" id="most_useful">most useful review</button>
         <input class="hidden" name='action' value="find_reviews">
         </form>
@@ -39,26 +40,30 @@
         <div class="row">
         <div class="col-md-3">
 
-
+      
         <h1><span class="glyphicon glyphicon-user" style="color:#FF3333"></span></h1>
-        <p>{{opinion.login_name}}</p>
+        <p>{{opinion['RB.login_name']}}</p>
 
 
         </div>
         <div class="col-md-9">
-          <h3>Rating: {{opinion.score}}</h3>
-          <p>{{opinion.comment}}</p>
+          <h3>Rating: {{opinion['RB.score']}}</h3>
+          <p>{{opinion['RB.comment']}}</p>
           <h4>Usefulness: 
-            {% if 1<=opinion.usefulness_score<=1.8 %}Useful 
-            {% elif opinion.usefulness_score>1.8 %}Very Useful
-            {% elif opinion.usefulness_score<1 %}Useless
-            {% endif %}({{opinion.usefulness_score}})</h4>
+            {% if opinion['A.usefulness_score'] %}
+            {% if 1<=opinion['A.usefulness_score']<=1.8 %}Useful 
+            {% elif opinion['A.usefulness_score']>1.8 %}Very Useful
+            {% elif opinion['A.usefulness_score']<1 %}Useless
+            {% endif %}({{opinion['A.usefulness_score']}})
+            {% else %}
+            Nobody has rated is opinion
+            {% endif %}</h4>
 
           <form method="post">
           <button class="btn btn-default" name="rating" value="0">Useless</button>
           <button class="btn btn-default" name="rating" value="1">UseFul</button>
           <button class="btn btn-default" name="rating" value="2">Very useful</button>
-          <input class="hidden" name='opinion_id' value="{{opinion.login_name}}">
+          <input class="hidden" name='opinion_id' value="{{opinion['RB.login_name']}}">
           <input class="hidden" name='action' value="rate_review">
           </form>
 
