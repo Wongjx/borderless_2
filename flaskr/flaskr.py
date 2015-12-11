@@ -8,9 +8,9 @@ import re
 
 #configuration
 
-DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless_2//flaskr//tmp//flaskr.db'
+# DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless_2//flaskr//tmp//flaskr.db'
 # DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
-# DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
+DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
 
 DEBUG = True
 SECRET_KEY = 'development key'
@@ -160,57 +160,55 @@ def book(isbn):
         else:
             query="""
                 select RB.rb_id, RB.isbn, RB.login_name, RB.score, RB.comment, RB.date, A.usefulness_score
-                from Rate_book RB, (select isbn, rated_id , avg(rating) as usefulness_score 
+                from Rate_book RB, (select isbn, rated_id , avg(rating) as usefulness_score
                 from (select RO.isbn, RO.rated_id, RO.rating
                     from Rate_opinion RO
-                    where exists 
+                    where exists
                         (select *
                         from Rate_book
                         where isbn = ?
                         and isbn = RO.isbn
                         )
-                    )
-                group by rated_id
-                ) A
+                    group by rated_id
+                    ) A
                 where RB.isbn = A.isbn
                 and RB.login_name = A.rated_id
+                union
+                select RB.rb_id, RB.isbn, RB.login_name, RB.score, RB.comment, RB.date, NULL as usefulness_score
+                from Rate_book RB
+                where RB.isbn = ? /*insert isbn*/
+                and RB.login_name not in
+                    (select rated_id
+                    from Rate_opinion
+                    where isbn = ? /*insert isbn*/
+                    )
+                %s
+                ;
             """
+            opinion_query=""
             avg_score=None
             if request.method=='POST':
                 action=request.form['action']
                 if action=='find_reviews':
                     opinion_query="""
-                    select RB.rb_id, RB.isbn, RB.login_name, RB.score, RB.comment, RB.date, A.usefulness_score
-                    from Rate_book RB, (select isbn, rated_id , avg(rating) as usefulness_score 
-                        from (select RO.isbn, RO.rated_id, RO.rating
-                            from Rate_opinion RO
-                            where exists 
-                                (select *
-                                from Rate_book
-                                where isbn = ?
-                                and isbn = RO.isbn
-                                )
-                            )
-                        group by rated_id
-                        ) A
-                    where RB.isbn = A.isbn
-                    and RB.login_name = A.rated_id
-                    order by A.usefulness_score desc
-                    limit ?"""
+                    order by A.usefulness_score desc 
+                    limit %s /*insert n. Note: limit n only applies when n < count(*) */
+                    """
                     n=request.form['n']
-                    opinions=db_query(opinion_query,[isbn,n])
+                    opinion_query=opinion_query%n
+                    
                 elif action=='rate_review':
                     rating=request.form['rating']
-                    rated_id=request.form['opinion_id']  
+                    rated_id=request.form['opinion_id']
                     if rated_id!=session['user']['login_name']:
-                        try:                  
+                        try:
                             g.db.execute('insert into Rate_opinion values (?,?,?,?,?)',[None,login_name,rated_id,isbn,rating])
                             g.db.commit()
                         except:
                             error="You have rated this review!"
                     else:
                         error="You cannot rate your own review!"
-                    opinions=db_query(query, [isbn])
+
                     #sql to rate opinion
                 elif action=='rate_book':
                     score=request.form['score']
@@ -219,24 +217,27 @@ def book(isbn):
                     date=date.strftime("%Y-%m-%d|%H:%M:%S")
                     g.db.execute('insert into Rate_book values (?,?,?,?,?,?)',[None,isbn,login_name,score,comment,date])
                     g.db.commit()
-                    opinions=db_query(query, [isbn])
+            query=query%opinion_query
+            opinions=db_query(query,[isbn,isbn,isbn])
             book['authors']=find_authors(book['isbn'])
             exist_comment=db_query('Select * from Rate_book where isbn = ? and login_name = ?', [isbn,login_name], one=True)
+            total_opinion_count=db_query("select count(*) as count from Rate_book, Books where Rate_book.isbn=Books.isbn and Books.isbn=?",[isbn], one=True)
             # find if comment made by this user exist, dont allow him to comment
             if request.method=="GET":
-                opinions=db_query(query, [isbn])               
-        
-        return render_template('individual_book.html',book=book,opinions=opinions,exist_comment=exist_comment,avg_score=avg_score,error=error)
+                opinions=db_query(query, [isbn,isbn,isbn])   
+                            
+        return render_template('individual_book.html',book=book,opinions=opinions,exist_comment=exist_comment,avg_score=avg_score,error=error,total_opinion_count=total_opinion_count['count'])
+
 
 @app.route('/search', methods=['GET','POST'])
 def search():
     error = None
-    if request.method == 'POST':        
+    if request.method == 'POST':
         # Check if advanced search
         book_rating = request.form['book_rating']
-        author='%'+'%' 
+        author='%'+'%'
         publisher = '%'+'%'
-        subject='%'+'%' 
+        subject='%'+'%'
         book_name='%'+'%'
         sorting=""
         year_of_publication=""
@@ -244,14 +245,14 @@ def search():
         if request.form.has_key("advance_search"):
             query="""
             select B2.isbn, B2.title, B2.year_of_publication, B2.publisher, B2.subject, B2.quantity_left,C.avg_score
-            from Books B2, 
+            from Books B2,
                 (select RB.isbn, avg(RB.score) as avg_score
                 from Rate_book RB
                 where RB.isbn in
                     (select B.isbn
                     from Books B
                     where exists
-                        (select * 
+                        (select *
                         from Authors_write A
                         where A.isbn = B.isbn
                         and A.name like ?
@@ -260,23 +261,23 @@ def search():
                     and B.subject like ? /*insert subject*/
                     and B.publisher like ? /*insert publisher*/
                     %s /*insert year*/
-                    ) 
+                    )
                 group by RB.isbn
                 ) C
             where C.isbn = B2.isbn
             and C.avg_score>=?
             %s
-            
+
             """
             print request.form
-            #Check author     
+            #Check author
             if request.form['author'] !="":
-                author = '%'+ request.form['author'] +'%' 
-                                
+                author = '%'+ request.form['author'] +'%'
+
             #Check publisher
             if request.form['publisher'] != "":
                 publisher = '%'+ request.form['publisher']+'%'
-                
+
             #Check Genre
             if request.form['subject'] != "None":
                 subject = '%'+request.form['subject']+'%'
@@ -286,7 +287,7 @@ def search():
                 book_name = '%'+request.form['book_name']+'%'
 
             if request.form.has_key('sorting'):
-                if request.form['sorting']!="":     
+                if request.form['sorting']!="":
                     if request.form['ordering']!="":
                         ordering=request.form['ordering']
 
@@ -298,17 +299,17 @@ def search():
 
             if request.form['year_of_publication'] !="":
                 year_of_publication = "and B.year_of_publication="+request.form['year_of_publication']
-                
+
             query=query%(year_of_publication,sorting)
-            
+
             params=[author,book_name,subject,publisher,int(book_rating)]
-            # params=['%%','%%','%%','%'+request.form['book_name']+'%',5]  
+            # params=['%%','%%','%%','%'+request.form['book_name']+'%',5]
         else:
             query = "select * from Books where title like ?"
             book_name = request.form['book_name']
             params=['%'+book_name+'%']
 
-# 
+#
         books = db_query( query, params)
         params={}
         params['author']=author.strip("%")
@@ -434,23 +435,36 @@ def admin_newbook():
         e = db_insert('insert into Books (isbn,title,publisher,year_of_publication,quantity_left,price,format,subject) VALUES (?,?,?,?,?,?,?,?)',[isbn,title,publisher,year_published,quantity,price,format,subject])
         if e!= True:
             return render_template('admin_newbook.html', error = str(e))
-        for author in authorlist:
-            e = db_insert('insert into Authors_write (name,isbn) VALUES (?,?)',[author,isbn])
-            if e!= True:
-                return render_template('admin_newbook.html',error = str(e) + ' (for Author(s) field)')
+        # for author in authorlist:
+        #     db_insert()
         flash('Book successfully added')
         return render_template('admin.html')
 
     elif request.method == 'GET':
         return render_template('admin_newbook.html')
 
-@app.route('/admin/inventory', methods=['GET','POST'])
+@app.route('/admin/inventory', methods=['GET','PUT'])
 def admin_invent():
+
     return render_template('admin inventory.html')#, error = 'Admin Inventory: Work in progress')
 
 @app.route('/admin/statistics', methods=['GET','POST'])
 def admin_stats():
-    return render_template('admin.html', error = 'Admin Statistics: Work in progress')
+    if request.method == 'POST':
+        m = request.form['m']
+        book_list = db_query("select OB.isbn, B.title, sum(OB.quantity) as order_count from Order_book OB, Books B where OB.isbn = B.isbn and order_date like '%2015-12%' /*insert '%yyyy-mm%'*/ group by OB.isbn order by order_count desc limit ?", [m])
+        pop_authors = db_query("select name, count(name) as author_count from Authors_write where isbn in (select isbn from Order_book where order_date like '%2015-12%' /*insert '%yyyy-mm%'*/  ) group by name order by author_count desc limit ?", [m])
+        pop_publishers = db_query("select B.publisher, count(B.publisher) as publisher_count from Books B, Order_book OB where B.isbn = OB.isbn and OB.order_date like '%2015-12%' /*insert '%yyyy-mm%'*/ group by publisher order by publisher_count desc limit ?", [m])
+        print book_list
+        return render_template('admin statistics.html', error = 'Admin Statistics: Work in progress', book_list=book_list, pop_publishers=pop_publishers, pop_authors=pop_authors)
+
+
+    if request.method == 'GET':
+        book_list = db_query("select OB.isbn, B.title, sum(OB.quantity) as order_count from Order_book OB, Books B where OB.isbn = B.isbn and order_date like '%2015-12%' /*insert '%yyyy-mm%'*/ group by OB.isbn order by order_count desc limit 10")
+        pop_authors = db_query("select name, count(name) as author_count from Authors_write where isbn in (select isbn from Order_book where order_date like '%2015-12%' /*insert '%yyyy-mm%'*/  ) group by name order by author_count desc limit 5")
+        pop_publishers = db_query("select B.publisher, count(B.publisher) as publisher_count from Books B, Order_book OB where B.isbn = OB.isbn and OB.order_date like '%2015-12%' /*insert '%yyyy-mm%'*/ group by publisher order by publisher_count desc limit 5")
+        
+        return render_template('admin statistics.html', error = 'Admin Statistics: Work in progress', book_list=book_list, pop_publishers=pop_publishers, pop_authors=pop_authors)
 
 
 if __name__ == '__main__':
