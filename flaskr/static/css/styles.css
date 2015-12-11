@@ -149,3 +149,7 @@ h3.highlight  {
 .qcellselector {
   display: none;
 }
+
+.qcell{
+  display: block;
+}
