@@ -2,8 +2,6 @@ drop table if exists Order_book;
 drop table if exists Rate_opinion;
 drop table if exists Rate_book;
 drop table if exists Authors_write;
-drop table if exists Authors;
-drop table if exists Writes;
 drop table if exists Books;
 drop table if exists Customers;
 
@@ -14,7 +12,6 @@ create table Books (isbn char(14) primary key,
                     quantity_left integer,
                     price real,
                     format char(9) check (format = 'hardcover' or format = 'paperback') ,
-                    keywords varchar(32),
                     subject varchar(32));
 
 create table Authors_write (aw_id integer primary key autoincrement,

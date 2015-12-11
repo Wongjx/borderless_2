@@ -13,7 +13,7 @@
       <div class="row">
       <div class="col-md-4">
         <br>
-        <img class="img-responsive" src="/static/img/{{book.subject}}.jpg" alt="">
+        <img class="img-responsive" src="/static/img/{{book.subject|lower()}}.jpg" alt="">
       </div>
       <div class="col-md-8">
       <div class="row">
@@ -100,6 +100,9 @@
 
                     <form method="POST" action="/order">
                     <li><h3 class="highlight">Order Now!<i class="glyphicon glyphicon-dashboard pull-right"></i></h3></li>
+                    <input type='range' class='book' name='quantity_in' id='quantity_in' max='{{book.quantity_left}}' min='0' value='0' oninput=changequantity('{{book.isbn}}')>
+                    <label for="quantity_out" style="color:black">Quantity: <span id="qout">0</span> </label>
+                    <output class="hidden"name='quantity_out' id='quantity_out' style="text-align:center">0</output>
                     <button class="btn btn-primary" id="order_button" name="order_button">Place Order</button>
                     <input class="hidden" name="isbn_{{book.isbn}}_in" value="1">
                     </form>
@@ -125,31 +128,13 @@
     });
 
     var changeinput = function(){
-    
+
     $('#score_out')['0'].value = $('#score')['0'].value;
 };
-
-    // this is the id of the form
-    // $("#order_button").click(function(e) {
-    //     var url = "/order"; // the script where you handle the form input.
-    //     var data = {"isbn_{{book.isbn}}":"1"}
-
-    //     $.ajax({
-    //            type: "POST",
-    //            url: url,
-    //            data: data,
-    //            success: function(data)
-    //            {
-    //              document.write(data);
-    //              document.close();
-    //            },
-    //            error: function(data)
-    //            {
-    //              alert(data)
-    //            },
-    //          });
-    //     // e.preventDefault(); // avoid to execute the actual submit of the form.
-    // });
+var changequantity = function(isbn){
+    $('#quantity_out')['0'].value = $('#quantity_in')['0'].value;
+    $('#qout')[0].innerHTML = $('#quantity_in')['0'].value;
+};
 
 
     </script>
