@@ -11,16 +11,8 @@ import re
 # DATABASE = 'D://dropbox//Dropbox//Documents//Database//git//borderless_2//flaskr//tmp//flaskr.db'
 # DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless//flaskr//tmp//flaskr.db'
 #DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
-<<<<<<< HEAD
 DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
-=======
-# DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
-=======
 
-# DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless_2//flaskr//tmp//flaskr.db'
-DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
-# DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
->>>>>>> 7acd1ab9a1e700a17d146c2d58a0050766a29e6f
 
 DEBUG = True
 SECRET_KEY = 'development key'
@@ -169,31 +161,32 @@ def book(isbn):
             return redirect(url_for('main'))
         else:
             query="""
-                select RB.rb_id, RB.isbn, RB.login_name, RB.score, RB.comment, RB.date, A.usefulness_score
-                from Rate_book RB, (select isbn, rated_id , avg(rating) as usefulness_score
-                from (select RO.isbn, RO.rated_id, RO.rating
-                    from Rate_opinion RO
-                    where exists
-                        (select *
-                        from Rate_book
-                        where isbn = ?
-                        and isbn = RO.isbn
+                    select RB.rb_id, RB.isbn, RB.login_name, RB.score, RB.comment, RB.date, A.usefulness_score
+                    from Rate_book RB, (select isbn, rated_id , avg(rating) as usefulness_score 
+                        from (select RO.isbn, RO.rated_id, RO.rating
+                            from Rate_opinion RO
+                            where exists 
+                                (select *
+                                from Rate_book
+                                where isbn = ? /*insert isbn*/
+                                and isbn = RO.isbn
+                                )
+                            )
+                        group by rated_id
+                        ) A
+                    where RB.isbn = A.isbn
+                    and RB.login_name = A.rated_id
+                    union
+                    select RB.rb_id, RB.isbn, RB.login_name, RB.score, RB.comment, RB.date, NULL as usefulness_score
+                    from Rate_book RB
+                    where RB.isbn = ? /*insert isbn*/
+                    and RB.login_name not in
+                        (select rated_id
+                        from Rate_opinion
+                        where isbn = ? /*insert isbn*/
                         )
-                    group by rated_id
-                    ) A
-                where RB.isbn = A.isbn
-                and RB.login_name = A.rated_id
-                union
-                select RB.rb_id, RB.isbn, RB.login_name, RB.score, RB.comment, RB.date, NULL as usefulness_score
-                from Rate_book RB
-                where RB.isbn = ? /*insert isbn*/
-                and RB.login_name not in
-                    (select rated_id
-                    from Rate_opinion
-                    where isbn = ? /*insert isbn*/
-                    )
-                %s
-                ;
+                    %s
+                    ;
             """
             opinion_query=""
             avg_score=None
@@ -227,6 +220,7 @@ def book(isbn):
                     date=date.strftime("%Y-%m-%d|%H:%M:%S")
                     g.db.execute('insert into Rate_book values (?,?,?,?,?,?)',[None,isbn,login_name,score,comment,date])
                     g.db.commit()
+
             query=query%opinion_query
             opinions=db_query(query,[isbn,isbn,isbn])
             book['authors']=find_authors(book['isbn'])
@@ -235,7 +229,7 @@ def book(isbn):
             # find if comment made by this user exist, dont allow him to comment
             if request.method=="GET":
                 opinions=db_query(query, [isbn,isbn,isbn])   
-                            
+
         return render_template('individual_book.html',book=book,opinions=opinions,exist_comment=exist_comment,avg_score=avg_score,error=error,total_opinion_count=total_opinion_count['count'])
 
 
@@ -252,8 +246,7 @@ def search():
         sorting=""
         year_of_publication=""
         ordering="desc"
-        if request.form.has_key("advance_search"):
-            query="""
+        query="""
             select B2.isbn, B2.title, B2.year_of_publication, B2.publisher, B2.subject, B2.quantity_left,C.avg_score
             from Books B2,
                 (select RB.isbn, avg(RB.score) as avg_score
@@ -279,7 +272,12 @@ def search():
             %s
 
             """
-            print request.form
+        #Check title
+        if request.form['book_name'] !="":
+            book_name = '%'+request.form['book_name']+'%'
+
+        if request.form.has_key("advance_search"):
+            
             #Check author
             if request.form['author'] !="":
                 author = '%'+ request.form['author'] +'%'
@@ -292,12 +290,10 @@ def search():
             if request.form['subject'] != "None":
                 subject = '%'+request.form['subject']+'%'
 
-            #Check title
-            if request.form['book_name'] !="":
-                book_name = '%'+request.form['book_name']+'%'
-
+            #Check Sorting
             if request.form.has_key('sorting'):
                 if request.form['sorting']!="":
+                    # Check ordering, default=desc
                     if request.form['ordering']!="":
                         ordering=request.form['ordering']
 
@@ -306,33 +302,45 @@ def search():
 
                     if request.form['sorting']=='sort_rating':
                         sorting="order by C.avg_score %s" %ordering
-
+            # Check year of publication
             if request.form['year_of_publication'] !="":
                 year_of_publication = "and B.year_of_publication="+request.form['year_of_publication']
+        # add year and sorting
+        query=query%(year_of_publication,sorting)
+        params=[author,book_name,subject,publisher,int(book_rating)]
 
-            query=query%(year_of_publication,sorting)
-
-            params=[author,book_name,subject,publisher,int(book_rating)]
-            # params=['%%','%%','%%','%'+request.form['book_name']+'%',5]
-        else:
-            query = "select * from Books where title like ?"
-            book_name = request.form['book_name']
-            params=['%'+book_name+'%']
-
-#
+        # query db
         books = db_query( query, params)
+
+        # reformat param for user display
         params={}
         params['author']=author.strip("%")
         params['publisher']=publisher.strip("%")
         params['subject']=subject.strip("%")
         params['book_name']=book_name.strip("%")
         params['avg_score']=book_rating
+
+        if sorting:
+            if 'score' in sorting:
+                sorting="Sort by Rating"
+            if 'year' in sorting:
+                sorting="Sort by year"
+            params['sorting']=sorting
+
+        if ordering=="desc":
+            ordering="Descending"
+        else:
+            ordering="Ascending"
+        params['ordering']=ordering
+
+        # throw error if no book found
         if len(books)<1:
             error = 'We are sorry! Unable to find what you are looking for!'
-            return render_template('search_result.html',error=error)
+            return render_template('search_result.html',error=error, params=params)
         else:
             for book in books:
                 book['authors']=find_authors(book['isbn'])
+
         return render_template('search_result.html',books=books,params=params)
 
 
