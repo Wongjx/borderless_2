@@ -127,7 +127,6 @@
     var each_data=[]
     each_data.push("<a href='/order_complete/{{o.order_date}}/{{session.user.login_name}}'>{{o.order_id}}</a>")
     each_data.push("{{o.order_date}}")
-    each_data.push("{{o.status|capitalize}}")
     each_data.push("{{o.quantity}}")
     orderSet.push(each_data)
     {% endfor %}
@@ -137,7 +136,6 @@
             columns: [
                 { title: "Order Id" },
                 { title: "Order Date" },
-                { title: "Status" },
                 { title: "Quantity" },
 
             ]

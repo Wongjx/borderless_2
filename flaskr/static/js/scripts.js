@@ -22,17 +22,19 @@ $('.editingcontrol input').blur(function() {
         .show()
 });
 
-$('.qcell').click(function() {
+function hide_this(isbn){
   $(this).hide();
-  $('.qcellselector').show();
-})
+  console.log(isbn);
+  $("#id_"+isbn).show();
+};
 
-$('.qcellselector').change(function(){
-  var val = $(this).selectedIndex;
-    var prevval= $('.qcell').val();
-  $(this).hide();
-  $('.qcell').text(val+prevval);
-})
+$('.qcell').click(function(e) {
+  test=$(this)
+  console.log(e)
+  console.log("click")
+  // $(this).hide();
+  // $('.qcellselector').show();
+});
 
 $('.qcellselector').keypress(function (e) {
   if (e.which == 13) {
@@ -40,7 +42,12 @@ $('.qcellselector').keypress(function (e) {
     var test = parseInt($(".qcellselector").val(), 10);
     var number = parseInt($('.qcellselector').find('.number').text());
     $(this).hide();
+    test=$(this);
     $('.qcell').text(String(test)).show();
     return false;    //<---- Add this line
   }
 });
+
+
+
+
