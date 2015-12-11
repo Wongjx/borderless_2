@@ -121,11 +121,11 @@ and RB.login_name = A.rated_id
 union
 select RB.rb_id, RB.isbn, RB.login_name, RB.score, RB.comment, RB.date, NULL as usefulness_score
 from Rate_book RB
-where RB.isbn = "978-0684801520"
+where RB.isbn = "978-0684801520" /*insert isbn*/
 and RB.login_name not in
 	(select rated_id
 	from Rate_opinion
-	where isbn = "978-0684801520"
+	where isbn = "978-0684801520" /*insert isbn*/
 	)
 order by A.usefulness_score desc
 limit 5 /*insert n. Note: limit n only applies when n < count(*) */
