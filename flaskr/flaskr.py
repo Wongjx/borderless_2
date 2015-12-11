@@ -8,10 +8,10 @@ import re
 
 
 
-# DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
+DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
 # DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless_2//flaskr//tmp//flaskr.db'
 # DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
-DATABASE = 'C:/Users/mypc/Documents/borderless_2/flaskr/tmp/flaskr.db'
+# DATABASE = 'C:/Users/mypc/Documents/borderless_2/flaskr/tmp/flaskr.db'
 
 DEBUG = True
 SECRET_KEY = 'development key'
@@ -461,11 +461,24 @@ def admin_newbook():
     elif request.method == 'GET':
         return render_template('admin_newbook.html')
 
-@app.route('/admin/inventory', methods=['GET','PUT'])
+@app.route('/admin/inventory', methods=['GET','POST'])
 def admin_invent():
+    error=None
+    inventory = db_query("select * from Books")
     if request.method == 'GET':
         inventory = db_query("select * from Books")
-        return render_template('admin inventory.html', error = 'Admin Inventory: Work in progress', book_list=inventory)
+        return render_template('admin inventory.html', error = error, book_list=inventory)
+    if request.method=='POST':
+        isbn=request.form['isbn']
+        if request.form['quantity']!="":
+            quantity=request.form['quantity']
+        else:
+            error="Please input quantity"
+            return render_template('admin inventory.html', error = error, book_list=inventory)
+        g.db.execute('update Books set quantity_left = ? where isbn=?',[int(quantity),isbn])
+        g.db.commit()
+        inventory = db_query("select * from Books")
+        return render_template('admin inventory.html', error = error, book_list=inventory)
 
     
 

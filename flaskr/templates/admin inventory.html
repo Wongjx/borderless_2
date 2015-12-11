@@ -63,7 +63,7 @@
             each_data.push("{{book.title}}")
             each_data.push("{{book.publisher}}")
             each_data.push("{{book.year_of_publication}}")
-            each_data.push("<div class='qcell' id='qcell_{{book.isbn}}'>{{book.quantity_left}}</div><form method='POST' id='form_{{book.isbn}}'><input type='number' id='id_{{book.isbn}}' class='qcellselector'></form>")
+            each_data.push("<div class='qcell'>{{book.quantity_left}}</div><form method='POST'><input type='number' id='id_{{book.isbn}}' name='quantity' class='qcellselector'><input class='hidden' name='isbn' value={{book.isbn}}><button class='qcellselector btn btn-default' id='button_{{book.isbn}}'>update</button></form>")
             each_data.push("{{book.price}}")
             each_data.push("{{book.format}}")
             each_data.push("{{book.subject}}")
@@ -84,8 +84,12 @@
 
                     ]
                 });
-
-            $("add_stock").click(function(){
+            $(".qcell").click(function(){
+              $(this).hide();
+              var isbn=test.parent().parent().children()[0].innerHTML
+              $('#id_'+isbn).show();$('#button_'+isbn).show();
+            });
+            $("#add_stock").click(function(){
               $("form_add_stock").submit();
             });
             </script>
