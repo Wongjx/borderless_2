@@ -100,7 +100,6 @@ def order():
     if request.method == 'POST':
         order_date=datetime.datetime.now()
         order_date=order_date.strftime("%Y-%m-%d|%H:%M:%S")
-        status="processing"
         error=None
 
         count=0
@@ -114,7 +113,7 @@ def order():
                     # decrement if quantity ordered > quantity left
                     count+=quantity
                     g.db.execute('update Books set quantity_left = quantity_left - 1 where isbn=? and quantity_left>?',[isbn,quantity]) #decrement number of book available
-                    g.db.execute('insert into Order_book (login_name,isbn,order_date,status,quantity) VALUES (?,?,?,?,?)',[login_name,isbn,order_date,status,quantity]) #insert order
+                    g.db.execute('insert into Order_book (login_name,isbn,order_date,quantity) VALUES (?,?,?,?)',[login_name,isbn,order_date,quantity]) #insert order
                     g.db.commit()
         if count <1: #Nothing ordered
             error="Invalid quantity. Please order more than 1 book."
@@ -161,8 +160,8 @@ def book(isbn):
             return redirect(url_for('main'))
         else:
             query="""
-                    select RB.rb_id, RB.isbn, RB.login_name, RB.score, RB.comment, RB.date, A.usefulness_score
-                    from Rate_book RB, (select isbn, rated_id , avg(rating) as usefulness_score 
+                    select RB.rb_id, RB.isbn, RB.login_name, RB.score, RB.comment, RB.date, A.usefulness_score, A.count_rater
+                    from Rate_book RB, (select isbn, rated_id , avg(rating) as usefulness_score, count(rated_id) as count_rater
                         from (select RO.isbn, RO.rated_id, RO.rating
                             from Rate_opinion RO
                             where exists 
@@ -177,7 +176,7 @@ def book(isbn):
                     where RB.isbn = A.isbn
                     and RB.login_name = A.rated_id
                     union
-                    select RB.rb_id, RB.isbn, RB.login_name, RB.score, RB.comment, RB.date, NULL as usefulness_score
+                    select RB.rb_id, RB.isbn, RB.login_name, RB.score, RB.comment, RB.date, NULL as usefulness_score, NULL as count_rater
                     from Rate_book RB
                     where RB.isbn = ? /*insert isbn*/
                     and RB.login_name not in
