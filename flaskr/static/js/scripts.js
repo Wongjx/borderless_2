@@ -22,31 +22,31 @@ $('.editingcontrol input').blur(function() {
         .show()
 });
 
-function hide_this(isbn){
-  $(this).hide();
-  console.log(isbn);
-  $("#id_"+isbn).show();
-};
+// function hide_this(isbn){
+//   $(this).hide();
+//   console.log(isbn);
+//   $("#id_"+isbn).show();
+// };
 
-$('.qcell').click(function(e) {
-  test=$(this)
-  console.log(e)
-  console.log("click")
-  // $(this).hide();
-  // $('.qcellselector').show();
-});
+// $('.qcell').click(function(e) {
+//   test=$(this)
+//   console.log(e)
+//   console.log("click")
+//   // $(this).hide();
+//   // $('.qcellselector').show();
+// });
 
-$('.qcellselector').keypress(function (e) {
-  if (e.which == 13) {
-    var val = $(this).selectedIndex
-    var test = parseInt($(".qcellselector").val(), 10);
-    var number = parseInt($('.qcellselector').find('.number').text());
-    $(this).hide();
-    test=$(this);
-    $('.qcell').text(String(test)).show();
-    return false;    //<---- Add this line
-  }
-});
+// $('.qcellselector').keypress(function (e) {
+//   if (e.which == 13) {
+//     var val = $(this).selectedIndex
+//     var test = parseInt($(".qcellselector").val(), 10);
+//     var number = parseInt($('.qcellselector').find('.number').text());
+//     $(this).hide();
+//     test=$(this);
+//     $('.qcell').text(String(test)).show();
+//     return false;    //<---- Add this line
+//   }
+// });
 
 
 

@@ -452,9 +452,33 @@ def admin_newbook():
         quantity = request.form['quantity']
         e = db_insert('insert into Books (isbn,title,publisher,year_of_publication,quantity_left,price,format,subject) VALUES (?,?,?,?,?,?,?,?)',[isbn,title,publisher,year_published,quantity,price,format,subject])
         if e!= True:
-            return render_template('admin_newbook.html', error = str(e))
-        # for author in authorlist:
-        #     db_insert()
+            if isbn == "" or len(isbn)!=14:
+                e = "Invalid ISBN"
+            if title == "":
+                e = "Title field was left blank!"
+            if authors == "":
+                e = "Authors field was left blank!"
+            if subject == "":
+                e = "Subject field was left blank!"
+            if publisher == "":
+                e = "Publisher field was left blank!"
+            if price == "":
+                e = "Price field was left blank!"
+            if year_published == "":
+                e = "Year of Publication field was left blank!"
+            if format == "" :
+                e = "Format field was left blank!"
+            if format!="paperback" or format!="hardcover":
+                e = "Invalid format"
+            if quantity == "":
+                e = "Quantity field was left blank!"
+            if quantity <0:
+                e = "Invalid quantity (negative number entered)"
+            return render_template('admin_newbook.html', error = e)
+        for author in authorlist:
+            e = db_insert('insert into Authors_write (name,isbn) VALUES (?,?)',[author,isbn])
+            if e!= True:
+                return render_template('admin_newbook.html',error = str(e) + ' (for Author(s) field)')
         flash('Book successfully added')
         return render_template('admin.html')
 
