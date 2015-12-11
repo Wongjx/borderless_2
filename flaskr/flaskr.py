@@ -6,19 +6,16 @@ from flask import Flask,request,session,g,redirect,url_for, abort, render_templa
 import datetime, time
 import re
 
-#configuration
-<<<<<<< HEAD
-DATABASE = 'D://dropbox//Dropbox//Documents//Database//git//borderless_2//flaskr//tmp//flaskr.db'
+
+# DATABASE = 'D://dropbox//Dropbox//Documents//Database//git//borderless_2//flaskr//tmp//flaskr.db'
 # DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless//flaskr//tmp//flaskr.db'
 #DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
 # DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
-=======
-
 # DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless_2//flaskr//tmp//flaskr.db'
 # DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
-DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
+DATABASE = 'C:/Users/mypc/Documents/borderless_2/flaskr/tmp/flaskr.db'
 
->>>>>>> cd10958fb73d680dca46a260df62f1388c98ab3d
+
 DEBUG = True
 SECRET_KEY = 'development key'
 USERNAME = 'admin'
