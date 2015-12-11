@@ -434,8 +434,10 @@ def admin_newbook():
         e = db_insert('insert into Books (isbn,title,publisher,year_of_publication,quantity_left,price,format,subject) VALUES (?,?,?,?,?,?,?,?)',[isbn,title,publisher,year_published,quantity,price,format,subject])
         if e!= True:
             return render_template('admin_newbook.html', error = str(e))
-        # for author in authorlist:
-        #     db_insert()
+        for author in authorlist:
+            e = db_insert('insert into Authors_write (name,isbn) VALUES (?,?)',[author,isbn])
+            if e!= True:
+                return render_template('admin_newbook.html',error = str(e) + ' (for Author(s) field)')
         flash('Book successfully added')
         return render_template('admin.html')
 
