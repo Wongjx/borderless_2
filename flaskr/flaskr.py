@@ -8,10 +8,10 @@ import re
 
 
 
-# DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
+DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
 # DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless_2//flaskr//tmp//flaskr.db'
 # DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
-DATABASE = 'C:/Users/mypc/Documents/borderless_2/flaskr/tmp/flaskr.db'
+# DATABASE = 'C:/Users/mypc/Documents/borderless_2/flaskr/tmp/flaskr.db'
 
 DEBUG = True
 SECRET_KEY = 'development key'
@@ -351,7 +351,14 @@ def profile(login_name):
     user = db_query('Select * from Customers where login_name = ? ', [login_name], one=True)
     orders = db_query('Select * from Order_book where login_name = ?', [login_name])
     opinions = db_query('select B.title,  B.isbn, RB.score, RB.comment, RB.date from Books B, Rate_book RB where RB.isbn = B.isbn and RB.login_name = ?',[login_name])
-    ratings = db_query('select C.full_name, C.login_name, B.title, B.isbn, RO.rating,RB.comment from Books B, Rate_opinion RO,Rate_book RB, Customers C where RO.isbn = B.isbn and RO.rated_id = C.login_name and RO.rated_id= RB.login_name and RO.rater_id = ? order by C.login_name',[login_name])
+    ratings = db_query("""
+        select RO.rated_id,RB.comment,B.title
+        from Rate_opinion RO, Rate_book RB, Books B
+        where RO.isbn=RB.isbn
+        and B.isbn=RO.isbn
+        and RB.login_name=RO.rated_id
+        and RO.rater_id=?
+        """,[login_name])
     return render_template('user_profile.html',user=user, orders = orders,opinions=opinions,ratings=ratings)
 # =======
     # orders = db_query('Select * from Order_book where login_name = ? order by order_id', [login_name])
@@ -485,11 +492,24 @@ def admin_newbook():
     elif request.method == 'GET':
         return render_template('admin_newbook.html')
 
-@app.route('/admin/inventory', methods=['GET','PUT'])
+@app.route('/admin/inventory', methods=['GET','POST'])
 def admin_invent():
+    error=None
+    inventory = db_query("select * from Books")
     if request.method == 'GET':
         inventory = db_query("select * from Books")
-        return render_template('admin inventory.html', error = 'Admin Inventory: Work in progress', book_list=inventory)
+        return render_template('admin inventory.html', error = error, book_list=inventory)
+    if request.method=='POST':
+        isbn=request.form['isbn']
+        if request.form['quantity']!="":
+            quantity=request.form['quantity']
+        else:
+            error="Please input quantity"
+            return render_template('admin inventory.html', error = error, book_list=inventory)
+        g.db.execute('update Books set quantity_left = ? where isbn=?',[int(quantity),isbn])
+        g.db.commit()
+        inventory = db_query("select * from Books")
+        return render_template('admin inventory.html', error = error, book_list=inventory)
 
     
 
