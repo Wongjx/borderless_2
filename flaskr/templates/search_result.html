@@ -5,10 +5,10 @@
 
 <header class="masthead">
   <div class="container">
-    <h1>Search Result for</h1>
-    {% if params.author %}<h4>Author: {{params.author}}</h4>{%endif%}
-    {% if params.publisher %}<h4>Publisher: {{params.publisher}}</h4>{%endif%}
-    {% if params.subject %}<h4>Subject: {{params.subject}}</h4>{%endif%}
+    <h1>{{books|count}} Books Found</h1>
+    {% if params.author %}<h4>Author: {{params.author|capitalize}}</h4>{%endif%}
+    {% if params.publisher %}<h4>Publisher: {{params.publisher|capitalize}}</h4>{%endif%}
+    {% if params.subject %}<h4>Subject: {{params.subject|capitalize}}</h4>{%endif%}
     {% if params.avg_score %}<h4>Rating more than: {{params.avg_score}}</h4>{%endif%}
     <br>
     <div class="row">

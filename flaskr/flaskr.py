@@ -143,6 +143,7 @@ def order_complete(date,login_name):
     for order in orders:
         recommendations=db_query(query,[order['isbn']])
         order['recommendations']=recommendations
+        order['authors']=find_authors(order['isbn'])
     return render_template('order_complete.html',orders=orders,date=date,total_price=total_price,total_quantity=total_quantity)
 
 @app.route('/book/<isbn>', methods=['GET','POST'])
@@ -201,7 +202,7 @@ def book(isbn):
                 elif action=='rate_review':
                     rating=request.form['rating']
                     rated_id=request.form['opinion_id']  
-                    if rated_id!=session.user.login_name:
+                    if rated_id!=session['user']['login_name']:
                         try:                  
                             g.db.execute('insert into Rate_opinion values (?,?,?,?,?)',[None,login_name,rated_id,isbn,rating])
                             g.db.commit()
@@ -316,7 +317,7 @@ def profile(login_name):
     # retreive orders from date and login_name
     user = db_query('Select * from Customers where login_name = ? ', [login_name], one=True)
     orders = db_query('Select * from Order_book where login_name = ?', [login_name])
-    opinions = db_query('select B.title,  B.isbn, RB.score, RB.comment from Books B, Rate_book RB where RB.isbn = B.isbn and RB.login_name = ?',[login_name])
+    opinions = db_query('select B.title,  B.isbn, RB.score, RB.comment, RB.date from Books B, Rate_book RB where RB.isbn = B.isbn and RB.login_name = ?',[login_name])
     ratings = db_query('select C.full_name, C.login_name, B.title, B.isbn, RO.rating,RB.comment from Books B, Rate_opinion RO,Rate_book RB, Customers C where RO.isbn = B.isbn and RO.rated_id = C.login_name and RO.rated_id= RB.login_name and RO.rater_id = ? order by C.login_name',[login_name])
     return render_template('user_profile.html',user=user, orders = orders,opinions=opinions,ratings=ratings)
 # =======

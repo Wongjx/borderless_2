@@ -24,7 +24,7 @@
     <span class="editingcontrol">
       <div class="row">
         <div class="col col-sm-6">
-          <label  class="profile">Address: </label>
+          <label  class="profile">Full name: </label>
         </div>
         <div class="col col-sm-6">
           <span class="editingcontrol">
@@ -92,10 +92,10 @@
 
         <div class="row">
           <div class="col col-sm-6">
-            <label class="profile">Full Name: </label>       </div>
+            <label class="profile">Address: </label>       </div>
             <div class="col col-sm-6">
               <span class="editingcontrol">
-                <label class="center" id="fullnamelabel" style="font-size:20px;">{{session.user.full_name}}</label>
+                <label class="center" id="fullnamelabel" style="font-size:20px;">{{session.user.address}}</label>
                 <input id="fullname-entry" style="display:none;" />
               </span>
             </div>
@@ -127,7 +127,7 @@
     var each_data=[]
     each_data.push("<a href='/order_complete/{{o.order_date}}/{{session.user.login_name}}'>{{o.order_id}}</a>")
     each_data.push("{{o.order_date}}")
-    each_data.push("{{o.status}}")
+    each_data.push("{{o.status|capitalize}}")
     each_data.push("{{o.quantity}}")
     orderSet.push(each_data)
     {% endfor %}
