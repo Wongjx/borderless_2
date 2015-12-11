@@ -7,11 +7,18 @@ import datetime, time
 import re
 
 #configuration
+<<<<<<< HEAD
+DATABASE = 'D://dropbox//Dropbox//Documents//Database//git//borderless_2//flaskr//tmp//flaskr.db'
+# DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless//flaskr//tmp//flaskr.db'
+#DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
+# DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
+=======
 
 # DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless_2//flaskr//tmp//flaskr.db'
 DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
 # DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
 
+>>>>>>> cd10958fb73d680dca46a260df62f1388c98ab3d
 DEBUG = True
 SECRET_KEY = 'development key'
 USERNAME = 'admin'
@@ -442,13 +449,28 @@ def admin_newbook():
     elif request.method == 'GET':
         return render_template('admin_newbook.html')
 
-@app.route('/admin/inventory', methods=['GET','POST'])
+@app.route('/admin/inventory', methods=['GET','PUT'])
 def admin_invent():
+
     return render_template('admin inventory.html')#, error = 'Admin Inventory: Work in progress')
 
 @app.route('/admin/statistics', methods=['GET','POST'])
 def admin_stats():
-    return render_template('admin.html', error = 'Admin Statistics: Work in progress')
+    if request.method == 'POST':
+        m = request.form['m']
+        book_list = db_query("select OB.isbn, B.title, sum(OB.quantity) as order_count from Order_book OB, Books B where OB.isbn = B.isbn and order_date like '%2015-12%' /*insert '%yyyy-mm%'*/ group by OB.isbn order by order_count desc limit ?", [m])
+        pop_authors = db_query("select name, count(name) as author_count from Authors_write where isbn in (select isbn from Order_book where order_date like '%2015-12%' /*insert '%yyyy-mm%'*/  ) group by name order by author_count desc limit ?", [m])
+        pop_publishers = db_query("select B.publisher, count(B.publisher) as publisher_count from Books B, Order_book OB where B.isbn = OB.isbn and OB.order_date like '%2015-12%' /*insert '%yyyy-mm%'*/ group by publisher order by publisher_count desc limit ?", [m])
+        print book_list
+        return render_template('admin statistics.html', error = 'Admin Statistics: Work in progress', book_list=book_list, pop_publishers=pop_publishers, pop_authors=pop_authors)
+
+
+    if request.method == 'GET':
+        book_list = db_query("select OB.isbn, B.title, sum(OB.quantity) as order_count from Order_book OB, Books B where OB.isbn = B.isbn and order_date like '%2015-12%' /*insert '%yyyy-mm%'*/ group by OB.isbn order by order_count desc limit 10")
+        pop_authors = db_query("select name, count(name) as author_count from Authors_write where isbn in (select isbn from Order_book where order_date like '%2015-12%' /*insert '%yyyy-mm%'*/  ) group by name order by author_count desc limit 5")
+        pop_publishers = db_query("select B.publisher, count(B.publisher) as publisher_count from Books B, Order_book OB where B.isbn = OB.isbn and OB.order_date like '%2015-12%' /*insert '%yyyy-mm%'*/ group by publisher order by publisher_count desc limit 5")
+        
+        return render_template('admin statistics.html', error = 'Admin Statistics: Work in progress', book_list=book_list, pop_publishers=pop_publishers, pop_authors=pop_authors)
 
 
 if __name__ == '__main__':
