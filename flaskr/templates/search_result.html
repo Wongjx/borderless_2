@@ -28,10 +28,12 @@
         <h4>Year of publication: {{s.year_of_publication}}</h4>
         <h4>Publisher: {{s.publisher}}</h4>
         <h4>Average Score: {{s.avg_score}}</h4>
-        <h4>Order</h4>
+        {% if s.quantity_left>0%}
+        <h4>Quantity</h4>
         
-        <input type='range' class='book' name='isbn_{{s.isbn}}_in' id='isbn_{{s.isbn}}_in' max='{{s.quantity_left}}' min='0' value='0' oninput=changeinput('{{s.isbn}}') style="width:50%">
+        <input type='range' class='book' name='isbn_{{s.isbn}}_in' id='isbn_{{s.isbn}}_in' max='{{s.quantity_left}}' min='0' value='0' oninput=changeinput('{{s.isbn}}') style="width:30%">
         <output name='isbn_{{s.isbn}}_out' id='isbn_{{s.isbn}}_out'>0</output>
+        {% endif %}
         
         </div>
       </div>

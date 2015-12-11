@@ -82,6 +82,18 @@
                   <label for="rating" style="color:black">Book rating more than:</label>
                   <input type='range' id="book_rating" name='book_rating' max='10' min='0' value='0' oninput=base_change_input()>
                   <output name='book_rating_out' id='book_rating_out'>0</output>
+
+                  <label for="sorting" style="color:black">Sort search by:</label>
+                  <br>
+                  <input type="radio" name="sorting" value="sort_year" id="sort_year"><label for="sort_year" style="color:black">Sort by Year of Publication</label>
+                  <br>
+                  <input type="radio" name="sorting" value="sort_rating" id="sort_rating"><label for="sort_rating" style="color:black">Sort by Book Rating</label>
+                  
+                  <label for="ordering" style="color:black">Order Sorting by:</label>
+                  <br>
+                  <input type="radio" name="ordering" value="desc" id="sort_year"><label for="sort_year" style="color:black">In descending order</label>
+                  <br>
+                  <input type="radio" name="ordering" value="asc" id="sort_rating"><label for="sort_rating" style="color:black">In Ascending order</label>
                  </div></div>
 
                 </form>
@@ -109,6 +121,7 @@ $("#main").click(function(){
 var base_change_input = function(){
     $('#book_rating_out')['0'].value = $('#book_rating')['0'].value;
 };
+
 </script>
 <!-- /.navbar -->
 {% with messages = get_flashed_messages() %}

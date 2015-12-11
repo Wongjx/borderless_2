@@ -233,6 +233,14 @@ def search():
     error = None
     if request.method == 'POST':        
         # Check if advanced search
+        book_rating = request.form['book_rating']
+        author='%'+'%' 
+        publisher = '%'+'%'
+        subject='%'+'%' 
+        book_name='%'+'%'
+        sorting=""
+        year_of_publication=""
+        ordering="desc"
         if request.form.has_key("advance_search"):
             query="""
             select B2.isbn, B2.title, B2.year_of_publication, B2.publisher, B2.subject, B2.quantity_left,C.avg_score
@@ -257,14 +265,10 @@ def search():
                 ) C
             where C.isbn = B2.isbn
             and C.avg_score>=?
-            order by C.avg_score desc
+            %s
             
             """
-            book_rating = request.form['book_rating']
-            author='%'+'%' 
-            publisher = '%'+'%'
-            subject='%'+'%' 
-            book_name='%'+'%'
+            print request.form
             #Check author     
             if request.form['author'] !="":
                 author = '%'+ request.form['author'] +'%' 
@@ -281,12 +285,22 @@ def search():
             if request.form['book_name'] !="":
                 book_name = '%'+request.form['book_name']+'%'
 
+            if request.form.has_key('sorting'):
+                if request.form['sorting']!="":     
+                    if request.form['ordering']!="":
+                        ordering=request.form['ordering']
+
+                    if request.form['sorting']=="sort_year":
+                        sorting="order by B2.year_of_publication %s"%ordering
+
+                    if request.form['sorting']=='sort_rating':
+                        sorting="order by C.avg_score %s" %ordering
+
             if request.form['year_of_publication'] !="":
                 year_of_publication = "and B.year_of_publication="+request.form['year_of_publication']
-                query=query%year_of_publication
-            else:
-                query=query%''
                 
+            query=query%(year_of_publication,sorting)
+            
             params=[author,book_name,subject,publisher,int(book_rating)]
             # params=['%%','%%','%%','%'+request.form['book_name']+'%',5]  
         else:
