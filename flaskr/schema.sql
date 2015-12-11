@@ -31,7 +31,6 @@ create table Order_book (order_id integer primary key autoincrement,
                          login_name varchar(32),
                          isbn char(14),
                          order_date date not null,
-                         status varchar(16) check (status = 'completed' or status = 'processing' or status = 'in delivery'),
                          quantity integer,
                          foreign key (login_name) references Customers,
                          foreign key (isbn) references Books);
