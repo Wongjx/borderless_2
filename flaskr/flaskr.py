@@ -8,9 +8,9 @@ import re
 
 #configuration
 
-# DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless_2//flaskr//tmp//flaskr.db'
+DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless_2//flaskr//tmp//flaskr.db'
 # DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
-DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
+# DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
 
 DEBUG = True
 SECRET_KEY = 'development key'
