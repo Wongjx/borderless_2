@@ -292,10 +292,12 @@ def search():
             #Check Sorting
             if request.form.has_key('sorting'):
                 if request.form['sorting']!="":
+                    print request.form['sorting']
+                    print ordering
                     # Check ordering, default=desc
-                    if request.form['ordering']!="":
-                        ordering=request.form['ordering']
-
+                    if request.form.has_key('ordering'):
+                        if request.form['ordering']!="":
+                            ordering=request.form['ordering']       
                     if request.form['sorting']=="sort_year":
                         sorting="order by B2.year_of_publication %s"%ordering
 
