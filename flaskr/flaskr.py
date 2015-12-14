@@ -8,8 +8,8 @@ import re
 
 
 
-DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
-# DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless_2//flaskr//tmp//flaskr.db'
+# DATABASE = 'D:/Year 3 term 6/Database/Borderless/flaskr/tmp/flaskr.db'
+DATABASE = 'C://Users//.nagareboshi.ritsuke//PycharmProjects//borderless_2//flaskr//tmp//flaskr.db'
 # DATABASE = '/home/jx/borderless/flaskr/tmp/flaskr.db'
 # DATABASE = 'C:/Users/mypc/Documents/borderless_2/flaskr/tmp/flaskr.db'
 
@@ -360,13 +360,6 @@ def profile(login_name):
         and RO.rater_id=?
         """,[login_name])
     return render_template('user_profile.html',user=user, orders = orders,opinions=opinions,ratings=ratings)
-# =======
-    # orders = db_query('Select * from Order_book where login_name = ? order by order_id', [login_name])
-    # book_ratings = db_query('Select * from Rate_book where login_name = ? order by score', [login_name])
-    # comment_ratings = db_query('Select * from Rate_opinion where rater_id = ? order by rating', [login_name])
-    # return render_template('user_profile.html',user=user, orders = orders, book_ratings = [book_ratings,len(book_ratings)], comment_ratings = [comment_ratings,len(comment_ratings)])
-# >>>>>>> 2f9b98161190375a9a2c0fc9a4dbcae2114cc9bc
-
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -506,7 +499,7 @@ def admin_invent():
         else:
             error="Please input quantity"
             return render_template('admin inventory.html', error = error, book_list=inventory)
-        g.db.execute('update Books set quantity_left = ? where isbn=?',[int(quantity),isbn])
+        g.db.execute('update Books set quantity_left = quantity_left + ? where isbn=?',[int(quantity),isbn])
         g.db.commit()
         inventory = db_query("select * from Books")
         return render_template('admin inventory.html', error = error, book_list=inventory)
