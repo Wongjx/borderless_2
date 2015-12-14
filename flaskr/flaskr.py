@@ -291,8 +291,6 @@ def search():
             #Check Sorting
             if request.form.has_key('sorting'):
                 if request.form['sorting']!="":
-                    print request.form['sorting']
-                    print ordering
                     # Check ordering, default=desc
                     if request.form.has_key('ordering'):
                         if request.form['ordering']!="":

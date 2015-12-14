@@ -86,7 +86,7 @@
                 });
             $(".qcell").click(function(){
               $(this).hide();
-              var isbn=test.parent().parent().children()[0].innerHTML
+              var isbn=$(this).parent().parent().children()[0].innerHTML
               $('#id_'+isbn).show();$('#button_'+isbn).show();
             });
             $("#add_stock").click(function(){
